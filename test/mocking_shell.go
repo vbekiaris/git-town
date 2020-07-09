@@ -22,6 +22,7 @@ type MockingShell struct {
 	homeDir        string // the directory that contains the global Git configuration
 	binDir         string // the directory that stores the mock shell command implementations, ignored if empty
 	testOrigin     string // optional content of the GIT_TOWN_REMOTE environment variable
+	testUpstream   string // optional content of the GIT_TOWN_UPSTREAM environment variable
 	hasMockCommand bool   // indicates whether the current test has mocked a command
 }
 
@@ -206,4 +207,9 @@ func (ms *MockingShell) RunWith(opts run.Options, cmd string, args ...string) (r
 // SetTestOrigin adds the given environment variable to subsequent runs of commands.
 func (ms *MockingShell) SetTestOrigin(content string) {
 	ms.testOrigin = content
+}
+
+// SetTestUpstream adds the given environment variable to subsequent runs of commands.
+func (ms *MockingShell) SetTestUpstream(content string) {
+	ms.testUpstream = content
 }

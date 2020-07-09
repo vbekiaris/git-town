@@ -2,7 +2,8 @@ Feature: git-new-pull-request: on a feature branch with a upstream remote
 
   Background:
     Given my repo has an upstream repo
-    And my repo's origin is "git@github.com:git-town/git-town"
+    And my repo's upstream is "git@github.com:git-town/git-town"
+    And my repo's origin is "git@github.com:kevgo/git-town"
     And my repo has a feature branch named "feature"
     And the following commits exist in my repo
       | BRANCH  | LOCATION | MESSAGE         |

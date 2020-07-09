@@ -602,6 +602,11 @@ func Steps(suite *godog.Suite, state *ScenarioState) {
 		return nil
 	})
 
+	suite.Step(`^my repo's upstream is "([^"]*)"$`, func(upstream string) error {
+		state.gitEnv.DevShell.SetTestUpstream(upstream)
+		return nil
+	})
+
 	suite.Step(`^my uncommitted file is stashed$`, func() error {
 		uncommittedFiles, err := state.gitEnv.DevRepo.UncommittedFiles()
 		if err != nil {
