@@ -1,8 +1,8 @@
+@skipWindows
 Feature: support many browsers and operating systems
 
-  @skipWindows
   Scenario Outline: supported tool installed
-    Given my repo has a feature branch named "feature"
+    Given my repo has a feature branch "feature"
     And my repo's origin is "https://github.com/git-town/git-town.git"
     And my computer has the "<TOOL>" tool installed
     And I am on the "feature" branch
@@ -23,9 +23,8 @@ Feature: support many browsers and operating systems
       | mozilla       |
       | netscape      |
 
-  @skipWindows
   Scenario: no supported tool installed
-    Given my repo has a feature branch named "feature"
+    Given my repo has a feature branch "feature"
     And my repo's origin is "https://github.com/git-town/git-town.git"
     And my computer has no tool to open browsers installed
     And I am on the "feature" branch

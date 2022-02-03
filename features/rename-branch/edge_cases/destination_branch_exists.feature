@@ -2,7 +2,7 @@ Feature: destination branch exists
 
   Scenario: destination branch exists locally
     Given my repo has the feature branches "current-feature" and "existing-feature"
-    And the following commits exist in my repo
+    And my repo contains the commits
       | BRANCH           | LOCATION      | MESSAGE                 |
       | current-feature  | local, remote | current-feature commit  |
       | existing-feature | local, remote | existing-feature commit |
@@ -16,15 +16,12 @@ Feature: destination branch exists
       a branch named "existing-feature" already exists
       """
     And I am still on the "current-feature" branch
-    And Git Town is still aware of this branch hierarchy
-      | BRANCH           | PARENT |
-      | current-feature  | main   |
-      | existing-feature | main   |
+    And Git Town still has the original branch hierarchy
 
   Scenario: destination branch exists remotely
-    Given my repo has a feature branch named "current-feature"
-    And my coworker has a feature branch named "existing-feature"
-    And the following commits exist in my repo
+    Given my repo has a feature branch "current-feature"
+    And my coworker has a feature branch "existing-feature"
+    And my repo contains the commits
       | BRANCH           | LOCATION      | MESSAGE                 |
       | current-feature  | local, remote | current-feature commit  |
       | existing-feature | remote        | existing-feature commit |
@@ -38,6 +35,4 @@ Feature: destination branch exists
       a branch named "existing-feature" already exists
       """
     And I am still on the "current-feature" branch
-    And Git Town is still aware of this branch hierarchy
-      | BRANCH          | PARENT |
-      | current-feature | main   |
+    And Git Town still has the original branch hierarchy

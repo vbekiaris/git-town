@@ -1,8 +1,8 @@
 Feature: deleting a remote only branch
 
   Background:
-    Given my origin has a feature branch named "feature"
-    And the following commits exist in my repo
+    Given my origin has a feature branch "feature"
+    And my repo contains the commits
       | BRANCH  | LOCATION | MESSAGE        |
       | feature | remote   | feature commit |
     And I am on the "main" branch
@@ -15,9 +15,8 @@ Feature: deleting a remote only branch
       | main   | git fetch --prune --tags |
       |        | git push origin :feature |
     And the existing branches are
-      | REPOSITORY | BRANCHES |
-      | local      | main     |
-      | remote     | main     |
+      | REPOSITORY    | BRANCHES |
+      | local, remote | main     |
     And Git Town now has no branch hierarchy information
 
   Scenario: undo

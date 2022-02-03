@@ -1,8 +1,8 @@
 Feature: restores deleted tracking branch
 
   Background:
-    Given my repo has a feature branch named "feature"
-    And the following commits exist in my repo
+    Given my repo has a feature branch "feature"
+    And my repo contains the commits
       | BRANCH  | LOCATION      | MESSAGE        |
       | feature | local, remote | feature commit |
     And the "feature" branch gets deleted on the remote
@@ -20,6 +20,4 @@ Feature: restores deleted tracking branch
       |         | git push -u origin feature |
     And I am still on the "feature" branch
     And all branches are now synchronized
-    And my repo now has the following commits
-      | BRANCH  | LOCATION      | MESSAGE        |
-      | feature | local, remote | feature commit |
+    And my repo is left with my original commits

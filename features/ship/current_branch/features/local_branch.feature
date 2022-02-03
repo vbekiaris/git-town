@@ -1,8 +1,8 @@
 Feature: ship a local feature branch
 
   Background:
-    Given my repo has a local feature branch named "feature"
-    And the following commits exist in my repo
+    Given my repo has a local feature branch "feature"
+    And my repo contains the commits
       | BRANCH  | LOCATION | MESSAGE        |
       | feature | local    | feature commit |
     And I am on the "feature" branch
@@ -23,9 +23,8 @@ Feature: ship a local feature branch
       |         | git branch -D feature        |
     And I am now on the "main" branch
     And the existing branches are
-      | REPOSITORY | BRANCHES |
-      | local      | main     |
-      | remote     | main     |
+      | REPOSITORY    | BRANCHES |
+      | local, remote | main     |
     And my repo now has the following commits
       | BRANCH | LOCATION      | MESSAGE      |
       | main   | local, remote | feature done |
@@ -47,6 +46,4 @@ Feature: ship a local feature branch
       | main    | local, remote | feature done          |
       |         |               | Revert "feature done" |
       | feature | local         | feature commit        |
-    And Git Town is still aware of this branch hierarchy
-      | BRANCH  | PARENT |
-      | feature | main   |
+    And Git Town still has the original branch hierarchy

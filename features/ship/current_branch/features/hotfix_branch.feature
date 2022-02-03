@@ -2,8 +2,8 @@ Feature: ship hotfixes
 
   Background:
     Given my repo has the perennial branch "production"
-    And my repo has a feature branch named "hotfix" as a child of "production"
-    And the following commits exist in my repo
+    And my repo has a feature branch "hotfix" as a child of "production"
+    And my repo contains the commits
       | BRANCH | LOCATION      | MESSAGE       |
       | hotfix | local, remote | hotfix commit |
     And I am on the "hotfix" branch
@@ -26,9 +26,8 @@ Feature: ship hotfixes
       |            | git branch -D hotfix              |
     And I am now on the "production" branch
     And the existing branches are
-      | REPOSITORY | BRANCHES         |
-      | local      | main, production |
-      | remote     | main, production |
+      | REPOSITORY    | BRANCHES         |
+      | local, remote | main, production |
     And my repo now has the following commits
       | BRANCH     | LOCATION      | MESSAGE     |
       | production | local, remote | hotfix done |
@@ -51,6 +50,4 @@ Feature: ship hotfixes
       | hotfix     | local, remote | hotfix commit        |
       | production | local, remote | hotfix done          |
       |            |               | Revert "hotfix done" |
-    And Git Town is now aware of this branch hierarchy
-      | BRANCH | PARENT     |
-      | hotfix | production |
+    And Git Town now has the original branch hierarchy

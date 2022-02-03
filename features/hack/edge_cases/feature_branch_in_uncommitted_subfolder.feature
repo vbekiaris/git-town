@@ -1,8 +1,8 @@
 Feature: inside an uncommitted subfolder on a feature branch
 
   Background:
-    Given my repo has a feature branch named "existing-feature"
-    And the following commits exist in my repo
+    Given my repo has a feature branch "existing-feature"
+    And my repo contains the commits
       | BRANCH | LOCATION      | MESSAGE     |
       | main   | local, remote | main commit |
     And I am on the "existing-feature" branch
@@ -43,6 +43,4 @@ Feature: inside an uncommitted subfolder on a feature branch
       | existing-feature | git stash pop                 |
     And I am now on the "existing-feature" branch
     And my repo is left with my original commits
-    And Git Town is now aware of this branch hierarchy
-      | BRANCH           | PARENT |
-      | existing-feature | main   |
+    And Git Town now has the original branch hierarchy

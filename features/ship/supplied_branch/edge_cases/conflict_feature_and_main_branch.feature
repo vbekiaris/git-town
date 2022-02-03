@@ -2,7 +2,7 @@ Feature: handle conflicts between the supplied feature branch and the main branc
 
   Background:
     Given my repo has the feature branches "feature" and "other-feature"
-    And the following commits exist in my repo
+    And my repo contains the commits
       | BRANCH  | LOCATION | MESSAGE                    | FILE NAME        | FILE CONTENT    |
       | main    | local    | conflicting main commit    | conflicting_file | main content    |
       | feature | local    | conflicting feature commit | conflicting_file | feature content |
@@ -43,17 +43,14 @@ Feature: handle conflicts between the supplied feature branch and the main branc
     And my workspace still contains my uncommitted file
     And there is no merge in progress
     And my repo now has the following commits
-      | BRANCH  | LOCATION      | MESSAGE                    | FILE NAME        | FILE CONTENT    |
-      | main    | local, remote | conflicting main commit    | conflicting_file | main content    |
-      | feature | local         | conflicting feature commit | conflicting_file | feature content |
-    And Git Town is still aware of this branch hierarchy
-      | BRANCH        | PARENT |
-      | feature       | main   |
-      | other-feature | main   |
+      | BRANCH  | LOCATION      | MESSAGE                    |
+      | main    | local, remote | conflicting main commit    |
+      | feature | local         | conflicting feature commit |
+    And Git Town still has the original branch hierarchy
 
   Scenario: continuing after resolving the conflicts
-    Given I resolve the conflict in "conflicting_file"
-    When I run "git-town continue"
+    When I resolve the conflict in "conflicting_file"
+    And I run "git-town continue"
     Then it runs the commands
       | BRANCH        | COMMAND                      |
       | feature       | git commit --no-edit         |
@@ -68,9 +65,8 @@ Feature: handle conflicts between the supplied feature branch and the main branc
     And I am now on the "other-feature" branch
     And my workspace still contains my uncommitted file
     And the existing branches are
-      | REPOSITORY | BRANCHES            |
-      | local      | main, other-feature |
-      | remote     | main, other-feature |
+      | REPOSITORY    | BRANCHES            |
+      | local, remote | main, other-feature |
     And my repo now has the following commits
       | BRANCH | LOCATION      | MESSAGE                 | FILE NAME        | FILE CONTENT     |
       | main   | local, remote | conflicting main commit | conflicting_file | main content     |
@@ -80,8 +76,8 @@ Feature: handle conflicts between the supplied feature branch and the main branc
       | other-feature | main   |
 
   Scenario: continuing after resolving the conflicts and comitting
-    Given I resolve the conflict in "conflicting_file"
-    When I run "git commit --no-edit"
+    When I resolve the conflict in "conflicting_file"
+    And I run "git commit --no-edit"
     And I run "git-town continue"
     Then it runs the commands
       | BRANCH        | COMMAND                      |
@@ -97,9 +93,9 @@ Feature: handle conflicts between the supplied feature branch and the main branc
     And my workspace still contains my uncommitted file
 
   Scenario: undo after continue
-    Given I resolve the conflict in "conflicting_file"
+    When I resolve the conflict in "conflicting_file"
     And I run "git-town continue"
-    When I run "git-town undo"
+    And I run "git-town undo"
     Then it runs the commands
       | BRANCH        | COMMAND                                                         |
       | other-feature | git add -A                                                      |
@@ -123,7 +119,4 @@ Feature: handle conflicts between the supplied feature branch and the main branc
       | feature | local, remote | conflicting feature commit       |
       |         | remote        | conflicting main commit          |
       |         |               | Merge branch 'main' into feature |
-    And Git Town is now aware of this branch hierarchy
-      | BRANCH        | PARENT |
-      | feature       | main   |
-      | other-feature | main   |
+    And Git Town now has the original branch hierarchy

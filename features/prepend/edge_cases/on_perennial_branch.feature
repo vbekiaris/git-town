@@ -1,8 +1,8 @@
-Feature: cannot prepend perennial branches
+Feature: does not prepend perennial branches
 
   Scenario: on main branch
-    Given my repo has a feature branch named "feature"
-    And the following commits exist in my repo
+    Given my repo has a feature branch "feature"
+    And my repo contains the commits
       | BRANCH  | LOCATION      | MESSAGE     |
       | feature | local, remote | good commit |
     And I am on the "main" branch

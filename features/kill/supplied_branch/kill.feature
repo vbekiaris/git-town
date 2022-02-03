@@ -2,7 +2,7 @@ Feature: deleting another than the current branch
 
   Background:
     Given my repo has the feature branches "good-feature" and "dead-feature"
-    And the following commits exist in my repo
+    And my repo contains the commits
       | BRANCH       | LOCATION      | MESSAGE                              | FILE NAME        |
       | main         | local, remote | conflicting with uncommitted changes | conflicting_file |
       | dead-feature | local, remote | dead-end commit                      | file             |
@@ -20,13 +20,12 @@ Feature: deleting another than the current branch
     And I am still on the "good-feature" branch
     And my workspace still contains my uncommitted file
     And the existing branches are
-      | REPOSITORY | BRANCHES           |
-      | local      | main, good-feature |
-      | remote     | main, good-feature |
+      | REPOSITORY    | BRANCHES           |
+      | local, remote | main, good-feature |
     And my repo now has the following commits
-      | BRANCH       | LOCATION      | MESSAGE                              | FILE NAME        |
-      | main         | local, remote | conflicting with uncommitted changes | conflicting_file |
-      | good-feature | local, remote | good commit                          | file             |
+      | BRANCH       | LOCATION      | MESSAGE                              |
+      | main         | local, remote | conflicting with uncommitted changes |
+      | good-feature | local, remote | good commit                          |
     And Git Town is now aware of this branch hierarchy
       | BRANCH       | PARENT |
       | good-feature | main   |
@@ -40,11 +39,7 @@ Feature: deleting another than the current branch
     And I am still on the "good-feature" branch
     And my workspace still contains my uncommitted file
     And the existing branches are
-      | REPOSITORY | BRANCHES                         |
-      | local      | main, dead-feature, good-feature |
-      | remote     | main, dead-feature, good-feature |
+      | REPOSITORY    | BRANCHES                         |
+      | local, remote | main, dead-feature, good-feature |
     And my repo is left with my original commits
-    And Git Town is now aware of this branch hierarchy
-      | BRANCH       | PARENT |
-      | dead-feature | main   |
-      | good-feature | main   |
+    And Git Town now has the original branch hierarchy

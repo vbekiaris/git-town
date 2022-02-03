@@ -1,8 +1,8 @@
-Feature: cannot ship an empty branch
+Feature: does not ship an empty branch
 
   Background:
-    Given my repo has a feature branch named "empty-feature"
-    And the following commits exist in my repo
+    Given my repo has a feature branch "empty-feature"
+    And my repo contains the commits
       | BRANCH        | LOCATION | MESSAGE        | FILE NAME   | FILE CONTENT   |
       | main          | remote   | main commit    | common_file | common content |
       | empty-feature | local    | feature commit | common_file | common content |
@@ -26,9 +26,7 @@ Feature: cannot ship an empty branch
       the branch "empty-feature" has no shippable changes
       """
     And I am still on the "empty-feature" branch
-    And Git Town is still aware of this branch hierarchy
-      | BRANCH        | PARENT |
-      | empty-feature | main   |
+    And Git Town still has the original branch hierarchy
 
   Scenario: undo
     When I run "git-town undo"
@@ -42,6 +40,4 @@ Feature: cannot ship an empty branch
       | BRANCH        | LOCATION      | MESSAGE        |
       | main          | local, remote | main commit    |
       | empty-feature | local         | feature commit |
-    And Git Town is still aware of this branch hierarchy
-      | BRANCH        | PARENT |
-      | empty-feature | main   |
+    And Git Town still has the original branch hierarchy

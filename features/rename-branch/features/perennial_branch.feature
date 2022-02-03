@@ -2,11 +2,11 @@ Feature: renaming a perennial branch with a tracking branch
 
   Background:
     Given my repo has the perennial branches "qa" and "production"
-    And my repo has a feature branch named "child-feature" as a child of "production"
-    And the following commits exist in my repo
+    And my repo has a feature branch "child-feature" as a child of "production"
+    And my repo contains the commits
       | BRANCH        | LOCATION      | MESSAGE              |
-      | production    | local, remote | production commit    |
       | child-feature | local, remote | child feature commit |
+      | production    | local, remote | production commit    |
     And I am on the "production" branch
 
   Scenario: normal rename fails
@@ -28,7 +28,7 @@ Feature: renaming a perennial branch with a tracking branch
       |                    | git push origin :production              |
       |                    | git branch -D production                 |
     And I am now on the "renamed-production" branch
-    And the perennial branches are now configured as "qa" and "renamed-production"
+    And the perennial branches are now "qa" and "renamed-production"
     And my repo now has the following commits
       | BRANCH             | LOCATION      | MESSAGE              |
       | child-feature      | local, remote | child feature commit |
@@ -37,8 +37,8 @@ Feature: renaming a perennial branch with a tracking branch
       | BRANCH        | PARENT             |
       | child-feature | renamed-production |
 
-  Scenario: undo
-    Given I run "git-town rename-branch --force production renamed-production"
+  Scenario: undo the forced rename
+    Given I ran "git-town rename-branch --force production renamed-production"
     When I run "git-town undo"
     Then it runs the commands
       | BRANCH             | COMMAND                                             |
@@ -48,11 +48,6 @@ Feature: renaming a perennial branch with a tracking branch
       |                    | git checkout production                             |
       | production         | git branch -D renamed-production                    |
     And I am now on the "production" branch
-    And the perennial branches are now configured as "qa" and "production"
-    And my repo now has the following commits
-      | BRANCH        | LOCATION      | MESSAGE              |
-      | child-feature | local, remote | child feature commit |
-      | production    | local, remote | production commit    |
-    And Git Town is now aware of this branch hierarchy
-      | BRANCH        | PARENT     |
-      | child-feature | production |
+    And the perennial branches are now "qa" and "production"
+    And my repo is left with my original commits
+    And Git Town now has the original branch hierarchy

@@ -2,8 +2,8 @@ Feature: append in offline mode
 
   Background:
     Given Git Town is in offline mode
-    And my repo has a feature branch named "existing-feature"
-    And the following commits exist in my repo
+    And my repo has a feature branch "existing-feature"
+    And my repo contains the commits
       | BRANCH           | LOCATION      | MESSAGE                 |
       | existing-feature | local, remote | existing feature commit |
     And I am on the "existing-feature" branch
@@ -30,7 +30,7 @@ Feature: append in offline mode
       | new-feature      | local         | existing feature commit |
 
   Scenario: undo
-    Given I run "git-town append new-feature"
+    Given I ran "git-town append new-feature"
     When I run "git-town undo"
     Then it runs the commands
       | BRANCH           | COMMAND                       |
@@ -44,6 +44,4 @@ Feature: append in offline mode
     And I am now on the "existing-feature" branch
     And my workspace still contains my uncommitted file
     And my repo is left with my original commits
-    And Git Town is now aware of this branch hierarchy
-      | BRANCH           | PARENT |
-      | existing-feature | main   |
+    And Git Town now has the original branch hierarchy

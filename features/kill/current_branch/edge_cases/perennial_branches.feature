@@ -1,12 +1,12 @@
-Feature: cannot kill perennial branches
+Feature: does not kill perennial branches
 
   Scenario: trying to delete the main branch
-    Given my repo has a feature branch named "feature"
-    And the following commits exist in my repo
+    Given my repo has a feature branch "feature"
+    And my repo contains the commits
       | BRANCH  | LOCATION      | MESSAGE     |
       | feature | local, remote | good commit |
     And I am on the "main" branch
-    Given my workspace has an uncommitted file
+    And my workspace has an uncommitted file
     When I run "git-town kill"
     Then it runs no commands
     And it prints the error:
@@ -16,20 +16,17 @@ Feature: cannot kill perennial branches
     And I am still on the "main" branch
     And my workspace still contains my uncommitted file
     And the existing branches are
-      | REPOSITORY | BRANCHES      |
-      | local      | main, feature |
-      | remote     | main, feature |
-    And Git Town is still aware of this branch hierarchy
-      | BRANCH  | PARENT |
-      | feature | main   |
+      | REPOSITORY    | BRANCHES      |
+      | local, remote | main, feature |
+    And Git Town still has the original branch hierarchy
 
   Scenario: trying to delete a perennial branch
     Given my repo has the perennial branch "qa"
-    And the following commits exist in my repo
+    And my repo contains the commits
       | BRANCH | LOCATION      | MESSAGE   |
       | qa     | local, remote | qa commit |
     And I am on the "qa" branch
-    Given my workspace has an uncommitted file
+    And my workspace has an uncommitted file
     When I run "git-town kill"
     Then it runs no commands
     And it prints the error:
@@ -39,7 +36,6 @@ Feature: cannot kill perennial branches
     And I am still on the "qa" branch
     And my workspace still contains my uncommitted file
     And the existing branches are
-      | REPOSITORY | BRANCHES |
-      | local      | main, qa |
-      | remote     | main, qa |
+      | REPOSITORY    | BRANCHES |
+      | local, remote | main, qa |
     And Git Town still has no branch hierarchy information

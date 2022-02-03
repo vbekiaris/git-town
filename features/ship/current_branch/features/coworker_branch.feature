@@ -1,8 +1,8 @@
 Feature: shipping a coworker's feature branch
 
   Background:
-    Given my repo has a feature branch named "feature"
-    And the following commits exist in my repo
+    Given my repo has a feature branch "feature"
+    And my repo contains the commits
       | BRANCH  | LOCATION      | MESSAGE         | AUTHOR                          |
       | feature | local, remote | coworker commit | coworker <coworker@example.com> |
     And I am on the "feature" branch
@@ -50,7 +50,7 @@ Feature: shipping a coworker's feature branch
     And Git Town now has no branch hierarchy information
 
   Scenario:  undo
-    Given I run "git-town ship -m 'feature done'"
+    Given I ran "git-town ship -m 'feature done'"
     When I run "git-town undo"
     Then it runs the commands
       | BRANCH  | COMMAND                                        |
@@ -67,6 +67,4 @@ Feature: shipping a coworker's feature branch
       | main    | local, remote | feature done          |
       |         |               | Revert "feature done" |
       | feature | local, remote | coworker commit       |
-    And Git Town is now aware of this branch hierarchy
-      | BRANCH  | PARENT |
-      | feature | main   |
+    And Git Town now has the original branch hierarchy

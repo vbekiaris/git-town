@@ -1,9 +1,9 @@
 Feature: shipping a parent branch
 
   Background:
-    Given my repo has a feature branch named "parent-feature"
-    And my repo has a feature branch named "child-feature" as a child of "parent-feature"
-    And the following commits exist in my repo
+    Given my repo has a feature branch "parent-feature"
+    And my repo has a feature branch "child-feature" as a child of "parent-feature"
+    And my repo contains the commits
       | BRANCH         | LOCATION      | MESSAGE               |
       | parent-feature | local, remote | parent feature commit |
       | child-feature  | local, remote | child feature commit  |
@@ -51,7 +51,4 @@ Feature: shipping a parent branch
       |                |               | Revert "parent feature done" |
       | child-feature  | local, remote | child feature commit         |
       | parent-feature | local, remote | parent feature commit        |
-    And Git Town is now aware of this branch hierarchy
-      | BRANCH         | PARENT         |
-      | child-feature  | parent-feature |
-      | parent-feature | main           |
+    And Git Town now has the original branch hierarchy

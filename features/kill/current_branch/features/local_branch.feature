@@ -1,9 +1,9 @@
 Feature: killing a local branch
 
   Background:
-    Given my repo has a feature branch named "other-feature"
-    And my repo has a local feature branch named "current-feature"
-    And the following commits exist in my repo
+    Given my repo has a feature branch "other-feature"
+    And my repo has a local feature branch "current-feature"
+    And my repo contains the commits
       | BRANCH          | LOCATION      | MESSAGE                |
       | current-feature | local         | current feature commit |
       | other-feature   | local, remote | other feature commit   |
@@ -21,9 +21,8 @@ Feature: killing a local branch
       | main            | git branch -D current-feature          |
     And I am now on the "main" branch
     And the existing branches are
-      | REPOSITORY | BRANCHES            |
-      | local      | main, other-feature |
-      | remote     | main, other-feature |
+      | REPOSITORY    | BRANCHES            |
+      | local, remote | main, other-feature |
     And my repo now has the following commits
       | BRANCH        | LOCATION      | MESSAGE              |
       | other-feature | local, remote | other feature commit |
@@ -45,7 +44,4 @@ Feature: killing a local branch
       | local      | main, current-feature, other-feature |
       | remote     | main, other-feature                  |
     And my repo is left with my original commits
-    And Git Town is now aware of this branch hierarchy
-      | BRANCH          | PARENT |
-      | current-feature | main   |
-      | other-feature   | main   |
+    And Git Town now has the original branch hierarchy

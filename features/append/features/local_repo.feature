@@ -1,9 +1,9 @@
 Feature: in a local repo
 
   Background:
-    Given my repo has a feature branch named "existing-feature"
+    Given my repo has a feature branch "existing-feature"
     And my repo does not have a remote origin
-    And the following commits exist in my repo
+    And my repo contains the commits
       | BRANCH           | LOCATION | MESSAGE                 |
       | existing-feature | local    | existing_feature_commit |
     And I am on the "existing-feature" branch
@@ -31,13 +31,12 @@ Feature: in a local repo
   Scenario: undo
     When I run "git town undo"
     Then it runs the commands
-      | BRANCH           | COMMAND                        |
-      | new-feature      | git add -A                     |
-      |                  | git stash                      |
-      |                  | git checkout existing-feature  |
-      | existing-feature | git branch -d new-feature      |
-      |                  | git stash pop                  |
+      | BRANCH           | COMMAND                       |
+      | new-feature      | git add -A                    |
+      |                  | git stash                     |
+      |                  | git checkout existing-feature |
+      | existing-feature | git branch -d new-feature     |
+      |                  | git stash pop                 |
     And I am now on the "existing-feature" branch
-    And Git Town is now aware of this branch hierarchy
-      | BRANCH           | PARENT |
-      | existing-feature | main   |
+    And my repo is left with my original commits
+    And Git Town still has the original branch hierarchy

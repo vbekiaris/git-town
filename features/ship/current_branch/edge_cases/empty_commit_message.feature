@@ -1,14 +1,14 @@
+@skipWindows
 Feature: aborting the ship by empty commit message
 
   Background:
-    Given my repo has a feature branch named "feature"
-    And the following commits exist in my repo
+    Given my repo has a feature branch "feature"
+    And my repo contains the commits
       | BRANCH  | LOCATION | MESSAGE        |
       | feature | local    | feature commit |
     And I am on the "feature" branch
     When I run "git-town ship" and enter an empty commit message
 
-  @skipWindows
   Scenario: result
     Then it runs the commands
       | BRANCH  | COMMAND                            |
@@ -31,11 +31,8 @@ Feature: aborting the ship by empty commit message
       """
     And I am still on the "feature" branch
     And my repo is left with my original commits
-    And Git Town is still aware of this branch hierarchy
-      | BRANCH  | PARENT |
-      | feature | main   |
+    And Git Town still has the original branch hierarchy
 
-  @skipWindows
   Scenario: undo
     When I run "git-town undo"
     Then it prints the error:
@@ -44,6 +41,4 @@ Feature: aborting the ship by empty commit message
       """
     And I am still on the "feature" branch
     And my repo is left with my original commits
-    And Git Town is still aware of this branch hierarchy
-      | BRANCH  | PARENT |
-      | feature | main   |
+    And Git Town still has the original branch hierarchy

@@ -1,9 +1,9 @@
 Feature: a parent branch of a local branch was shipped
 
   Background:
-    Given my repo has a feature branch named "feature"
-    And my repo has a feature branch named "feature-child" as a child of "feature"
-    And the following commits exist in my repo
+    Given my repo has a feature branch "feature"
+    And my repo has a feature branch "feature-child" as a child of "feature"
+    And my repo contains the commits
       | BRANCH        | LOCATION      | MESSAGE              |
       | feature       | local, remote | feature commit       |
       | feature-child | local, remote | feature-child commit |
@@ -20,9 +20,8 @@ Feature: a parent branch of a local branch was shipped
     And I am now on the "main" branch
     And my workspace still contains my uncommitted file
     And the existing branches are
-      | REPOSITORY | BRANCHES            |
-      | local      | main, feature-child |
-      | remote     | main, feature-child |
+      | REPOSITORY    | BRANCHES            |
+      | local, remote | main, feature-child |
     And Git Town is now aware of this branch hierarchy
       | BRANCH        | PARENT |
       | feature-child | main   |
@@ -38,7 +37,4 @@ Feature: a parent branch of a local branch was shipped
       | REPOSITORY | BRANCHES                     |
       | local      | main, feature, feature-child |
       | remote     | main, feature-child          |
-    And Git Town is now aware of this branch hierarchy
-      | BRANCH        | PARENT  |
-      | feature       | main    |
-      | feature-child | feature |
+    And Git Town now has the original branch hierarchy

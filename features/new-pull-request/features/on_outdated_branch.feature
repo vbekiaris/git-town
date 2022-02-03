@@ -1,9 +1,10 @@
+@skipWindows
 Feature: syncing before creating the pull request
 
   Background:
-    Given my code base has a feature branch named "parent-feature"
-    And my code base has a feature branch named "child-feature" as a child of "parent-feature"
-    And the following commits exist in my repo
+    Given my code base has a feature branch "parent-feature"
+    And my code base has a feature branch "child-feature" as a child of "parent-feature"
+    And my repo contains the commits
       | BRANCH         | LOCATION | MESSAGE              |
       | main           | local    | local main commit    |
       |                | remote   | remote main commit   |
@@ -17,7 +18,6 @@ Feature: syncing before creating the pull request
     And my workspace has an uncommitted file
     When I run "git-town new-pull-request"
 
-  @skipWindows
   Scenario: result
     Then it runs the commands
       | BRANCH         | COMMAND                                                                                   |
@@ -37,7 +37,7 @@ Feature: syncing before creating the pull request
       |                | git push                                                                                  |
       |                | git stash pop                                                                             |
       | <none>         | open https://github.com/git-town/git-town/compare/parent-feature...child-feature?expand=1 |
-    Then "open" launches a new pull request with this url in my browser:
+    And "open" launches a new pull request with this url in my browser:
       """
       https://github.com/git-town/git-town/compare/parent-feature...child-feature?expand=1
       """

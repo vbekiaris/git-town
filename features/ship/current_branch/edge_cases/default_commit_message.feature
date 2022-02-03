@@ -1,8 +1,8 @@
 Feature: must provide a commit message
 
   Background:
-    Given my repo has a feature branch named "feature"
-    And the following commits exist in my repo
+    Given my repo has a feature branch "feature"
+    And my repo contains the commits
       | BRANCH  | LOCATION | MESSAGE        |
       | feature | local    | feature commit |
     And I am on the "feature" branch
@@ -30,9 +30,7 @@ Feature: must provide a commit message
       """
     And I am still on the "feature" branch
     And my repo is left with my original commits
-    And Git Town is still aware of this branch hierarchy
-      | BRANCH  | PARENT |
-      | feature | main   |
+    And Git Town still has the original branch hierarchy
 
   Scenario: undo
     When I run "git-town undo"
@@ -42,6 +40,4 @@ Feature: must provide a commit message
       """
     And I am still on the "feature" branch
     And my repo is left with my original commits
-    And Git Town is still aware of this branch hierarchy
-      | BRANCH  | PARENT |
-      | feature | main   |
+    And Git Town still has the original branch hierarchy

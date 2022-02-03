@@ -1,9 +1,9 @@
 Feature: nested feature branches
 
   Scenario:
-    Given my repo has a feature branch named "parent-feature"
-    And my repo has a feature branch named "child-feature" as a child of "parent-feature"
-    And the following commits exist in my repo
+    Given my repo has a feature branch "parent-feature"
+    And my repo has a feature branch "child-feature" as a child of "parent-feature"
+    And my repo contains the commits
       | BRANCH         | LOCATION | MESSAGE                      |
       | main           | local    | local main commit            |
       |                | remote   | remote main commit           |
@@ -53,7 +53,4 @@ Feature: nested feature branches
       |                |               | remote main commit                                                       |
       |                |               | local main commit                                                        |
       |                |               | Merge branch 'main' into parent-feature                                  |
-    And Git Town is still aware of this branch hierarchy
-      | BRANCH         | PARENT         |
-      | child-feature  | parent-feature |
-      | parent-feature | main           |
+    And Git Town still has the original branch hierarchy

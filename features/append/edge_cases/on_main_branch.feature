@@ -1,7 +1,7 @@
 Feature: on the main branch
 
   Background:
-    Given the following commits exist in my repo
+    Given my repo contains the commits
       | BRANCH | LOCATION | MESSAGE     |
       | main   | remote   | main_commit |
     And I am on the "main" branch
@@ -42,3 +42,4 @@ Feature: on the main branch
     And my repo now has the following commits
       | BRANCH | LOCATION      | MESSAGE     |
       | main   | local, remote | main_commit |
+    And Git Town now has no branch hierarchy information

@@ -3,7 +3,7 @@ Feature: local branch
   Background:
     Given my repo does not have a remote origin
     And my repo has the local feature branches "dead-feature" and "other-feature"
-    And the following commits exist in my repo
+    And my repo contains the commits
       | BRANCH        | LOCATION | MESSAGE              |
       | dead-feature  | local    | dead feature commit  |
       | other-feature | local    | other feature commit |
@@ -43,7 +43,4 @@ Feature: local branch
       | REPOSITORY | BRANCHES                          |
       | local      | main, dead-feature, other-feature |
     And my repo is left with my original commits
-    And Git Town is now aware of this branch hierarchy
-      | BRANCH        | PARENT |
-      | dead-feature  | main   |
-      | other-feature | main   |
+    And Git Town now has the original branch hierarchy

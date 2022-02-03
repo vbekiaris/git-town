@@ -1,8 +1,8 @@
 Feature: merge conflict
 
   Background:
-    Given my repo has a local feature branch named "feature"
-    And the following commits exist in my repo
+    Given my repo has a local feature branch "feature"
+    And my repo contains the commits
       | BRANCH  | LOCATION      | MESSAGE        | FILE NAME        | FILE CONTENT    |
       | main    | local, remote | main commit    | conflicting_file | main content    |
       | feature | local         | feature commit | conflicting_file | feature content |
@@ -72,11 +72,15 @@ Feature: merge conflict
     And I am still on the "feature" branch
     And my workspace still contains my uncommitted file
     And my repo now has the following commits
-      | BRANCH  | LOCATION      | MESSAGE                          | FILE NAME        | FILE CONTENT    |
-      | main    | local, remote | main commit                      | conflicting_file | main content    |
-      | feature | local, remote | feature commit                   | conflicting_file | feature content |
-      |         |               | main commit                      | conflicting_file | main content    |
-      |         |               | Merge branch 'main' into feature |                  |                 |
+      | BRANCH  | LOCATION      | MESSAGE                          |
+      | main    | local, remote | main commit                      |
+      | feature | local, remote | feature commit                   |
+      |         |               | main commit                      |
+      |         |               | Merge branch 'main' into feature |
+    And my repo now has the following committed files
+      | BRANCH  | NAME             | CONTENT          |
+      | main    | conflicting_file | main content     |
+      | feature | conflicting_file | resolved content |
 
   @skipWindows
   Scenario: continuing after resolving conflicts and committing

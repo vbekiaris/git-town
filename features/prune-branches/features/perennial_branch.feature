@@ -2,8 +2,8 @@ Feature: remove perennial branch configuration when pruning perennial branches
 
   Background:
     Given my repo has the branches "active-perennial" and "deleted-perennial"
-    And the perennial branches are configured as "active-perennial" and "deleted-perennial"
-    And the following commits exist in my repo
+    And the perennial branches are "active-perennial" and "deleted-perennial"
+    And my repo contains the commits
       | BRANCH            | LOCATION      | MESSAGE                  |
       | active-perennial  | local, remote | active-perennial commit  |
       | deleted-perennial | local, remote | deleted-perennial commit |
@@ -21,10 +21,9 @@ Feature: remove perennial branch configuration when pruning perennial branches
     And I am now on the "main" branch
     And my workspace still contains my uncommitted file
     And the existing branches are
-      | REPOSITORY | BRANCHES               |
-      | local      | main, active-perennial |
-      | remote     | main, active-perennial |
-    And the perennial branches are now configured as "active-perennial"
+      | REPOSITORY    | BRANCHES               |
+      | local, remote | main, active-perennial |
+    And the perennial branches are now "active-perennial"
 
   Scenario: undo
     When I run "git-town undo"
@@ -38,4 +37,4 @@ Feature: remove perennial branch configuration when pruning perennial branches
       | REPOSITORY | BRANCHES                                  |
       | local      | main, active-perennial, deleted-perennial |
       | remote     | main, active-perennial                    |
-    And the perennial branches are now configured as "active-perennial" and "deleted-perennial"
+    And the perennial branches are now "active-perennial" and "deleted-perennial"

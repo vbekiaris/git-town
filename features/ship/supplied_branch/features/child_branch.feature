@@ -1,10 +1,10 @@
-Feature: cannot ship a child branch
+Feature: does not ship a child branch
 
   Background:
-    Given my repo has a feature branch named "feature-1"
-    And my repo has a feature branch named "feature-2" as a child of "feature-1"
-    And my repo has a feature branch named "feature-3" as a child of "feature-2"
-    And the following commits exist in my repo
+    Given my repo has a feature branch "feature-1"
+    And my repo has a feature branch "feature-2" as a child of "feature-1"
+    And my repo has a feature branch "feature-3" as a child of "feature-2"
+    And my repo contains the commits
       | BRANCH    | LOCATION      | MESSAGE          |
       | feature-1 | local, remote | feature 1 commit |
       | feature-2 | local, remote | feature 2 commit |
@@ -23,11 +23,7 @@ Feature: cannot ship a child branch
       """
     And I am now on the "feature-1" branch
     And my repo is left with my original commits
-    And Git Town is now aware of this branch hierarchy
-      | BRANCH    | PARENT    |
-      | feature-1 | main      |
-      | feature-2 | feature-1 |
-      | feature-3 | feature-2 |
+    And Git Town now has the original branch hierarchy
 
   Scenario: undo
     When I run "git-town undo"
@@ -38,8 +34,4 @@ Feature: cannot ship a child branch
       """
     And I am still on the "feature-1" branch
     And my repo is left with my original commits
-    And Git Town is still aware of this branch hierarchy
-      | BRANCH    | PARENT    |
-      | feature-1 | main      |
-      | feature-2 | feature-1 |
-      | feature-3 | feature-2 |
+    And Git Town now has the original branch hierarchy

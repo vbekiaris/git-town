@@ -2,7 +2,7 @@ Feature: delete branches that were shipped or removed on another machine
 
   Background:
     Given my repo has the feature branches "active-feature" and "finished-feature"
-    And the following commits exist in my repo
+    And my repo contains the commits
       | BRANCH           | LOCATION      | MESSAGE                 |
       | active-feature   | local, remote | active-feature commit   |
       | finished-feature | local, remote | finished-feature commit |
@@ -20,9 +20,8 @@ Feature: delete branches that were shipped or removed on another machine
     And I am now on the "main" branch
     And my workspace still contains my uncommitted file
     And the existing branches are
-      | REPOSITORY | BRANCHES             |
-      | local      | main, active-feature |
-      | remote     | main, active-feature |
+      | REPOSITORY    | BRANCHES             |
+      | local, remote | main, active-feature |
     And Git Town is now aware of this branch hierarchy
       | BRANCH         | PARENT |
       | active-feature | main   |
@@ -39,7 +38,4 @@ Feature: delete branches that were shipped or removed on another machine
       | REPOSITORY | BRANCHES                               |
       | local      | main, active-feature, finished-feature |
       | remote     | main, active-feature                   |
-    And Git Town is now aware of this branch hierarchy
-      | BRANCH           | PARENT |
-      | active-feature   | main   |
-      | finished-feature | main   |
+    And Git Town now has the original branch hierarchy

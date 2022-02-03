@@ -2,9 +2,9 @@
 Feature: shipping a branch that exists only on the remote
 
   Background:
-    Given my repo has a feature branch named "other-feature"
-    And my origin has a feature branch named "feature"
-    And the following commits exist in my repo
+    Given my repo has a feature branch "other-feature"
+    And my origin has a feature branch "feature"
+    And my repo contains the commits
       | BRANCH  | LOCATION | MESSAGE        | FILE NAME    |
       | feature | remote   | feature commit | feature_file |
     And I am on the "other-feature" branch
@@ -35,9 +35,8 @@ Feature: shipping a branch that exists only on the remote
     And I am now on the "other-feature" branch
     And my workspace still contains my uncommitted file
     And the existing branches are
-      | REPOSITORY | BRANCHES            |
-      | local      | main, other-feature |
-      | remote     | main, other-feature |
+      | REPOSITORY    | BRANCHES            |
+      | local, remote | main, other-feature |
     And my repo now has the following commits
       | BRANCH | LOCATION      | MESSAGE      |
       | main   | local, remote | feature done |

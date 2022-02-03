@@ -2,7 +2,7 @@ Feature: syncing inside a folder that doesn't exist on the main branch
 
   Background:
     Given my repo has the feature branches "current-feature" and "other-feature"
-    And the following commits exist in my repo
+    And my repo contains the commits
       | BRANCH          | LOCATION      | MESSAGE                    | FILE NAME        | FILE CONTENT    |
       | main            | local, remote | conflicting main commit    | conflicting_file | main content    |
       | current-feature | local         | conflicting feature commit | conflicting_file | feature content |
@@ -56,8 +56,8 @@ Feature: syncing inside a folder that doesn't exist on the main branch
     And my repo still has a merge in progress
 
   Scenario: continuing after resolving the conflicts
-    Given I resolve the conflict in "conflicting_file"
-    When I run "git-town continue" in the "new_folder" folder
+    When I resolve the conflict in "conflicting_file"
+    And I run "git-town continue" in the "new_folder" folder
     Then it runs the commands
       | BRANCH          | COMMAND                                  |
       | current-feature | git commit --no-edit                     |
@@ -73,15 +73,15 @@ Feature: syncing inside a folder that doesn't exist on the main branch
     And my workspace has the uncommitted file again
     And there is no merge in progress
     And my repo now has the following commits
-      | BRANCH          | LOCATION      | MESSAGE                                  | FILE NAME        |
-      | main            | local, remote | conflicting main commit                  | conflicting_file |
-      | current-feature | local, remote | conflicting feature commit               | conflicting_file |
-      |                 |               | folder commit                            | new_folder/file1 |
-      |                 |               | conflicting main commit                  | conflicting_file |
-      |                 |               | Merge branch 'main' into current-feature |                  |
-      | other-feature   | local, remote | other feature commit                     | file2            |
-      |                 |               | conflicting main commit                  | conflicting_file |
-      |                 |               | Merge branch 'main' into other-feature   |                  |
+      | BRANCH          | LOCATION      | MESSAGE                                  |
+      | main            | local, remote | conflicting main commit                  |
+      | current-feature | local, remote | conflicting feature commit               |
+      |                 |               | folder commit                            |
+      |                 |               | conflicting main commit                  |
+      |                 |               | Merge branch 'main' into current-feature |
+      | other-feature   | local, remote | other feature commit                     |
+      |                 |               | conflicting main commit                  |
+      |                 |               | Merge branch 'main' into other-feature   |
     And my repo still has the following committed files
       | BRANCH          | NAME             | CONTENT          |
       | main            | conflicting_file | main content     |

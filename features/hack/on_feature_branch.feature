@@ -1,8 +1,8 @@
 Feature: on the main branch
 
   Background:
-    Given my repo has a feature branch named "existing-feature"
-    And the following commits exist in my repo
+    Given my repo has a feature branch "existing-feature"
+    And my repo contains the commits
       | BRANCH           | LOCATION | MESSAGE                 |
       | main             | remote   | main commit             |
       | existing-feature | local    | existing feature commit |
@@ -48,6 +48,4 @@ Feature: on the main branch
       | BRANCH           | LOCATION      | MESSAGE                 |
       | main             | local, remote | main commit             |
       | existing-feature | local         | existing feature commit |
-    And Git Town is now aware of this branch hierarchy
-      | BRANCH           | PARENT |
-      | existing-feature | main   |
+    And Git Town now has the original branch hierarchy

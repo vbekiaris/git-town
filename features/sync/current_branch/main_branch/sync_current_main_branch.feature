@@ -2,7 +2,7 @@ Feature: syncing the main branch
 
   Background:
     Given I am on the "main" branch
-    And the following commits exist in my repo
+    And my repo contains the commits
       | LOCATION | MESSAGE       | FILE NAME   |
       | local    | local commit  | local_file  |
       | remote   | remote commit | remote_file |
@@ -23,6 +23,6 @@ Feature: syncing the main branch
     And my workspace still contains my uncommitted file
     And all branches are now synchronized
     And my repo now has the following commits
-      | BRANCH | LOCATION      | MESSAGE       | FILE NAME   |
-      | main   | local, remote | remote commit | remote_file |
-      |        |               | local commit  | local_file  |
+      | BRANCH | LOCATION      | MESSAGE       |
+      | main   | local, remote | remote commit |
+      |        |               | local commit  |

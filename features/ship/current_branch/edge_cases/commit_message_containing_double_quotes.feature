@@ -1,8 +1,8 @@
 Feature: commit message can contain double-quotes
 
   Background:
-    Given my repo has a feature branch named "feature"
-    And the following commits exist in my repo
+    Given my repo has a feature branch "feature"
+    And my repo contains the commits
       | BRANCH  | LOCATION | MESSAGE        |
       | feature | local    | feature commit |
     And I am on the "feature" branch
@@ -25,9 +25,8 @@ Feature: commit message can contain double-quotes
       |         | git branch -D feature                              |
     And I am now on the "main" branch
     And the existing branches are
-      | REPOSITORY | BRANCHES |
-      | local      | main     |
-      | remote     | main     |
+      | REPOSITORY    | BRANCHES |
+      | local, remote | main     |
     And my repo doesn't have any uncommitted files
     And my repo now has the following commits
       | BRANCH | LOCATION      | MESSAGE                            |

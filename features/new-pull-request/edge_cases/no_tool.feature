@@ -1,13 +1,13 @@
+@skipWindows
 Feature: print the URL when no browser installed
 
   Background:
-    Given my repo has a feature branch named "feature"
+    Given my repo has a feature branch "feature"
     And my repo's origin is "git@github.com:git-town/git-town"
     And my computer has no tool to open browsers installed
     And I am on the "feature" branch
     When I run "git-town new-pull-request"
 
-  @skipWindows
   Scenario: result
     Then it runs the commands
       | BRANCH  | COMMAND                            |
@@ -22,7 +22,6 @@ Feature: print the URL when no browser installed
       Please open in a browser: https://github.com/git-town/git-town/compare/feature?expand=1
       """
 
-  @skipWindows
   Scenario: undo
     When I run "git-town undo"
     Then it runs the commands

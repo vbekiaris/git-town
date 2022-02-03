@@ -1,6 +1,6 @@
+@skipWindows
 Feature: ask for missing configuration
 
-  @skipWindows
   Scenario: unconfigured
     Given I haven't configured Git Town yet
     And my repo's origin is "https://github.com/git-town/git-town.git"
@@ -9,5 +9,5 @@ Feature: ask for missing configuration
       | PROMPT                                     | ANSWER  |
       | Please specify the main development branch | [ENTER] |
     Then it prints the initial configuration prompt
-    And the main branch is now configured as "main"
-    And my repo is now configured with no perennial branches
+    And the main branch is now "main"
+    And my repo is now has no perennial branches

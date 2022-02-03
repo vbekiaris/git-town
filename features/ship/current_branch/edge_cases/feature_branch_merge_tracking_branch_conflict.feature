@@ -1,8 +1,8 @@
 Feature: handle conflicts between the shipped branch and its tracking branch
 
   Background:
-    Given my repo has a feature branch named "feature"
-    And the following commits exist in my repo
+    Given my repo has a feature branch "feature"
+    And my repo contains the commits
       | BRANCH  | LOCATION | MESSAGE                   | FILE NAME        | FILE CONTENT               |
       | feature | local    | local conflicting commit  | conflicting_file | local conflicting content  |
       |         | remote   | remote conflicting commit | conflicting_file | remote conflicting content |
@@ -35,9 +35,7 @@ Feature: handle conflicts between the shipped branch and its tracking branch
     And I am still on the "feature" branch
     And there is no merge in progress
     And my repo is left with my original commits
-    And Git Town is still aware of this branch hierarchy
-      | BRANCH  | PARENT |
-      | feature | main   |
+    And Git Town still has the original branch hierarchy
 
   Scenario: continuing after resolving the conflicts
     When I resolve the conflict in "conflicting_file"
@@ -54,9 +52,8 @@ Feature: handle conflicts between the shipped branch and its tracking branch
       |         | git branch -D feature        |
     And I am now on the "main" branch
     And the existing branches are
-      | REPOSITORY | BRANCHES |
-      | local      | main     |
-      | remote     | main     |
+      | REPOSITORY    | BRANCHES |
+      | local, remote | main     |
     And my repo now has the following commits
       | BRANCH | LOCATION      | MESSAGE      | FILE NAME        |
       | main   | local, remote | feature done | conflicting_file |

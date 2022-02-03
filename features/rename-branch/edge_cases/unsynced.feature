@@ -1,10 +1,10 @@
 Feature: rename an unsynced branch
 
   Background:
-    Given my repo has a feature branch named "current-feature"
+    Given my repo has a feature branch "current-feature"
 
   Scenario: unpulled remote commits
-    And the following commits exist in my repo
+    And my repo contains the commits
       | BRANCH          | LOCATION | MESSAGE               |
       | current-feature | remote   | remote feature commit |
     And I am on the "current-feature" branch
@@ -19,7 +19,7 @@ Feature: rename an unsynced branch
     And I am still on the "current-feature" branch
 
   Scenario: unpushed local commits
-    And the following commits exist in my repo
+    And my repo contains the commits
       | BRANCH          | LOCATION | MESSAGE              |
       | current-feature | local    | local feature commit |
     And I am on the "current-feature" branch

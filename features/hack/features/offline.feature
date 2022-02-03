@@ -2,7 +2,7 @@ Feature: offline mode
 
   Background:
     Given Git Town is in offline mode
-    And the following commits exist in my repo
+    And my repo contains the commits
       | BRANCH | LOCATION      | MESSAGE     |
       | main   | local, remote | main commit |
     And my workspace has an uncommitted file
@@ -38,7 +38,5 @@ Feature: offline mode
       |         | git stash pop         |
     And I am now on the "main" branch
     And my workspace still contains my uncommitted file
-    And my repo now has the following commits
-      | BRANCH | LOCATION      | MESSAGE     |
-      | main   | local, remote | main commit |
+    And my repo is left with my original commits
     And Git Town now has no branch hierarchy information

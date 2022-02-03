@@ -2,8 +2,8 @@ Feature: with upstream remote
 
   Background:
     Given my repo has an upstream repo
-    And my repo has a feature branch named "feature"
-    And the following commits exist in my repo
+    And my repo has a feature branch "feature"
+    And my repo contains the commits
       | BRANCH  | LOCATION | MESSAGE         |
       | main    | upstream | upstream commit |
       | feature | local    | local commit    |

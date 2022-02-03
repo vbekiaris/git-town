@@ -29,10 +29,24 @@ func TestDataTable(t *testing.T) {
 
 func TestDataTable_Remove(t *testing.T) {
 	t.Parallel()
-	r := test.DataTable{}
-	r.AddRow("local", "main, master, foo")
-	r.AddRow("remote", "master, bar")
-	r.RemoveText("master, ")
+	table := test.DataTable{}
+	table.AddRow("local", "main, master, foo")
+	table.AddRow("remote", "master, bar")
+	table.RemoveText("master, ")
 	expected := "| local  | main, foo |\n| remote | bar       |\n"
-	assert.Equal(t, expected, r.String())
+	assert.Equal(t, expected, table.String())
+}
+
+func TestDataTable_Sort(t *testing.T) {
+	t.Parallel()
+	table := test.DataTable{}
+	table.AddRow("gamma", "3")
+	table.AddRow("beta", "2")
+	table.AddRow("alpha", "1")
+	table.Sort()
+	want := test.DataTable{Cells: [][]string{{"alpha", "1"}, {"beta", "2"}, {"gamma", "3"}}}
+	diff, errCnt := table.EqualDataTable(want)
+	if errCnt > 0 {
+		t.Errorf("\nERROR! Found %d differences\n\n%s", errCnt, diff)
+	}
 }

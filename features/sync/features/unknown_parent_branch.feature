@@ -18,7 +18,7 @@ Feature: Entering a parent branch name when prompted
       | PROMPT                                          | ANSWER        |
       | Please specify the parent branch of 'feature-2' | [DOWN][ENTER] |
       | Please specify the parent branch of 'feature-1' | [ENTER]       |
-    Then Git Town is now aware of this branch hierarchy
+    And Git Town is now aware of this branch hierarchy
       | BRANCH    | PARENT    |
       | feature-1 | main      |
       | feature-2 | feature-1 |
@@ -27,4 +27,4 @@ Feature: Entering a parent branch name when prompted
     When I run "git-town sync" and answer the prompts:
       | PROMPT                                          | ANSWER      |
       | Please specify the parent branch of 'feature-2' | [UP][ENTER] |
-    Then the perennial branches are now configured as "feature-2"
+    Then the perennial branches are now "feature-2"

@@ -2,7 +2,7 @@ Feature: handle conflicts between the main branch and its tracking branch
 
   Background:
     Given my repo has the feature branches "feature" and "other-feature"
-    And the following commits exist in my repo
+    And my repo contains the commits
       | BRANCH  | LOCATION | MESSAGE                   | FILE NAME        | FILE CONTENT               |
       | main    | local    | conflicting local commit  | conflicting_file | local conflicting content  |
       |         | remote   | conflicting remote commit | conflicting_file | remote conflicting content |
@@ -36,16 +36,13 @@ Feature: handle conflicts between the main branch and its tracking branch
       | other-feature | git stash pop              |
     And I am still on the "other-feature" branch
     And my workspace still contains my uncommitted file
-    And there is no rebase in progress
+    And there is no rebase in progress anymore
     And my repo is left with my original commits
-    And Git Town is still aware of this branch hierarchy
-      | BRANCH        | PARENT |
-      | feature       | main   |
-      | other-feature | main   |
+    And Git Town still has the original branch hierarchy
 
   Scenario: continuing after resolving the conflicts
-    Given I resolve the conflict in "conflicting_file"
-    When I run "git-town continue" and close the editor
+    When I resolve the conflict in "conflicting_file"
+    And I run "git-town continue" and close the editor
     Then it runs the commands
       | BRANCH        | COMMAND                            |
       | main          | git rebase --continue              |
@@ -69,16 +66,15 @@ Feature: handle conflicts between the main branch and its tracking branch
       |        |               | conflicting local commit  | conflicting_file | resolved content           |
       |        |               | feature done              | feature_file     | feature content            |
     And the existing branches are
-      | REPOSITORY | BRANCHES            |
-      | local      | main, other-feature |
-      | remote     | main, other-feature |
+      | REPOSITORY    | BRANCHES            |
+      | local, remote | main, other-feature |
     And Git Town is now aware of this branch hierarchy
       | BRANCH        | PARENT |
       | other-feature | main   |
 
   Scenario: continuing after resolving the conflicts and continuing the rebase
-    Given I resolve the conflict in "conflicting_file"
-    When I run "git rebase --continue" and close the editor
+    When I resolve the conflict in "conflicting_file"
+    And I run "git rebase --continue" and close the editor
     And I run "git-town continue"
     Then it runs the commands
       | BRANCH        | COMMAND                            |
@@ -97,9 +93,9 @@ Feature: handle conflicts between the main branch and its tracking branch
     And I am now on the "other-feature" branch
 
   Scenario: undo after continue
-    Given I resolve the conflict in "conflicting_file"
+    When I resolve the conflict in "conflicting_file"
     And I run "git-town continue" and close the editor
-    When I run "git-town undo"
+    And I run "git-town undo"
     Then it runs the commands
       | BRANCH        | COMMAND                                                         |
       | other-feature | git add -A                                                      |
@@ -125,7 +121,4 @@ Feature: handle conflicts between the main branch and its tracking branch
       |         | remote        | conflicting remote commit        |
       |         |               | conflicting local commit         |
       |         |               | Merge branch 'main' into feature |
-    And Git Town is now aware of this branch hierarchy
-      | BRANCH        | PARENT |
-      | feature       | main   |
-      | other-feature | main   |
+    And Git Town now has the original branch hierarchy

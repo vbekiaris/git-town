@@ -1,8 +1,8 @@
 Feature: shipping the current feature branch with a tracking branch
 
   Background:
-    Given my repo has a feature branch named "feature"
-    And the following commits exist in my repo
+    Given my repo has a feature branch "feature"
+    And my repo contains the commits
       | BRANCH  | LOCATION      | MESSAGE        |
       | feature | local, remote | feature commit |
     And I am on the "feature" branch
@@ -25,9 +25,8 @@ Feature: shipping the current feature branch with a tracking branch
       |         | git branch -D feature              |
     And I am now on the "main" branch
     And the existing branches are
-      | REPOSITORY | BRANCHES |
-      | local      | main     |
-      | remote     | main     |
+      | REPOSITORY    | BRANCHES |
+      | local, remote | main     |
     And my repo now has the following commits
       | BRANCH | LOCATION      | MESSAGE      |
       | main   | local, remote | feature done |
@@ -50,6 +49,4 @@ Feature: shipping the current feature branch with a tracking branch
       | main    | local, remote | feature done          |
       |         |               | Revert "feature done" |
       | feature | local, remote | feature commit        |
-    And Git Town is now aware of this branch hierarchy
-      | BRANCH  | PARENT |
-      | feature | main   |
+    And Git Town now has the original branch hierarchy

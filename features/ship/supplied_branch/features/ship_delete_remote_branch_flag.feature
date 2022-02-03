@@ -2,7 +2,7 @@ Feature: Skip deleting the remote branch when shipping another branch
 
   Background:
     Given my repo has the feature branches "feature" and "other-feature"
-    And the following commits exist in my repo
+    And my repo contains the commits
       | BRANCH        | LOCATION      | MESSAGE        |
       | feature       | local, remote | feature commit |
       | other-feature | local         | other commit   |
@@ -28,9 +28,8 @@ Feature: Skip deleting the remote branch when shipping another branch
       |               | git checkout other-feature         |
     And I am now on the "other-feature" branch
     And the existing branches are
-      | REPOSITORY | BRANCHES            |
-      | local      | main, other-feature |
-      | remote     | main, other-feature |
+      | REPOSITORY    | BRANCHES            |
+      | local, remote | main, other-feature |
     And my repo now has the following commits
       | BRANCH        | LOCATION      | MESSAGE      |
       | main          | local, remote | feature done |
@@ -57,7 +56,4 @@ Feature: Skip deleting the remote branch when shipping another branch
       |               |               | Revert "feature done" |
       | feature       | local         | feature commit        |
       | other-feature | local         | other commit          |
-    And Git Town is now aware of this branch hierarchy
-      | BRANCH        | PARENT |
-      | feature       | main   |
-      | other-feature | main   |
+    And Git Town now has the original branch hierarchy
