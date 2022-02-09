@@ -1,10 +1,10 @@
-Feature: refuses to rename the main branch
+Feature: does not rename the main branch
 
   Background:
     Given I am on the "main" branch
 
-  Scenario: trying to rename
-    When I run "git-town rename-branch main renamed-main"
+  Scenario: try to rename
+    When I run "git-town rename-branch main new"
     Then it runs no commands
     And it prints the error:
       """
@@ -12,8 +12,8 @@ Feature: refuses to rename the main branch
       """
     And I am still on the "main" branch
 
-  Scenario: trying to force rename
-    When I run "git-town rename-branch main renamed-main --force"
+  Scenario: try to force rename
+    When I run "git-town rename-branch main new --force"
     Then it runs no commands
     And it prints the error:
       """

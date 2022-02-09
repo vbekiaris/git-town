@@ -9,6 +9,10 @@ build:  # builds for the current platform
 cuke: build   # runs the new Godog-based feature tests
 	@env GOGC=off go test . -v -count=1
 
+cuke-open:  # runs only the currently uncommitted feature tests
+	@git status --porcelain | grep -v '^\s*D ' | sed 's/^\s*\w\s*//' | grep '\.feature' | xargs godog
+#                           remove deleted     remove indicator
+
 cuke-prof: build  # creates a flamegraph
 	env GOGC=off go test . -v -cpuprofile=godog.out
 	@rm git-town.test
@@ -85,7 +89,7 @@ setup-godog:  # install the godog binary
 stats:  # shows code statistics
 	@find . -type f | grep -v './tools/node_modules' | grep -v '\./vendor/' | grep -v '\./.git/' | grep -v './website/book' | xargs scc
 
-test: lint docs unit cuke  # runs all the tests
+test: lint docs u cuke  # runs all the tests
 .PHONY: test
 
 test-go: build u lint-go cuke  # runs all tests for Golang

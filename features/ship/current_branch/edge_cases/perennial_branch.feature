@@ -1,15 +1,15 @@
 Feature: does not ship perennial branches
 
-  Scenario: trying to ship the main branch
+  Scenario: try to ship the main branch
     Given I am on the "main" branch
-    When I run "git-town ship -m 'something done'"
+    When I run "git-town ship -m done"
     Then it prints the error:
       """
       the branch "main" is not a feature branch. Only feature branches can be shipped
       """
     And I am still on the "main" branch
 
-  Scenario: trying to ship a perennial branch
+  Scenario: try to ship a perennial branch
     Given my repo has the perennial branches "qa" and "production"
     And I am on the "production" branch
     When I run "git-town ship"

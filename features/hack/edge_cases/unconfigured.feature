@@ -2,13 +2,12 @@
 Feature: missing configuration
 
   Background: running unconfigured
-    Given I haven't configured Git Town yet
+    Given Git Town is not configured
     When I run "git-town hack feature" and answer the prompts:
       | PROMPT                                     | ANSWER  |
       | Please specify the main development branch | [ENTER] |
 
   Scenario: result
-    Then it prints the initial configuration prompt
     And it runs the commands
       | BRANCH | COMMAND                  |
       | main   | git fetch --prune --tags |
@@ -28,4 +27,4 @@ Feature: missing configuration
       | feature | git checkout main     |
       | main    | git branch -d feature |
     And I am now on the "main" branch
-    And Git Town now has no branch hierarchy information
+    And Git Town is now aware of no branch hierarchy

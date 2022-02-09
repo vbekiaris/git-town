@@ -16,6 +16,7 @@ import (
 	"github.com/cucumber/messages-go/v10"
 	"github.com/git-town/git-town/v7/src/cli"
 	"github.com/git-town/git-town/v7/src/run"
+	"github.com/git-town/git-town/v7/src/stringslice"
 )
 
 // beforeSuiteMux ensures that we run BeforeSuite only once globally.
@@ -76,6 +77,29 @@ func Steps(suite *godog.Suite, state *ScenarioState) {
 		}
 	})
 
+	suite.Step(`^the coworker fetches updates$`, func() error {
+		return state.gitEnv.CoworkerRepo.Fetch()
+	})
+
+	suite.Step(`^the coworker is on the "([^"]*)" branch$`, func(branchName string) error {
+		return state.gitEnv.CoworkerRepo.CheckoutBranch(branchName)
+	})
+
+	suite.Step(`^a coworker runs "([^"]+)"$`, func(command string) error {
+		state.runRes, state.runErr = state.gitEnv.CoworkerRepo.RunString(command)
+		return nil
+	})
+
+	suite.Step(`^the coworker sets the parent branch of "([^"]*)" as "([^"]*)"$`, func(childBranch, parentBranch string) error {
+		_ = state.gitEnv.CoworkerRepo.Config.SetParentBranch(childBranch, parentBranch)
+		return nil
+	})
+
+	suite.Step(`^the origin has a feature branch "([^"]*)"$`, func(branch string) error {
+		state.initialRemoteBranches = append(state.initialRemoteBranches, branch)
+		return state.gitEnv.OriginRepo.CreateBranch(branch, "main")
+	})
+
 	suite.Step(`^all branches are now synchronized$`, func() error {
 		outOfSync, err := state.gitEnv.DevRepo.HasBranchesOutOfSync()
 		if err != nil {
@@ -91,7 +115,7 @@ func Steps(suite *godog.Suite, state *ScenarioState) {
 		return state.gitEnv.DevRepo.Config.SetOffline(true)
 	})
 
-	suite.Step(`^Git Town is no longer configured for this repo$`, func() error {
+	suite.Step(`^Git Town is no longer configured$`, func() error {
 		res, err := state.gitEnv.DevRepo.HasGitTownConfigNow()
 		if err != nil {
 			return err
@@ -113,7 +137,7 @@ func Steps(suite *godog.Suite, state *ScenarioState) {
 		return nil
 	})
 
-	suite.Step(`^Git Town (?:now|still) has no branch hierarchy information$`, func() error {
+	suite.Step(`^Git Town is (?:now|still) aware of no branch hierarchy$`, func() error {
 		state.gitEnv.DevRepo.Config.Reload()
 		if state.gitEnv.DevRepo.Config.HasBranchInformation() {
 			branchInfo := state.gitEnv.DevRepo.Config.ParentBranchMap()
@@ -122,7 +146,7 @@ func Steps(suite *godog.Suite, state *ScenarioState) {
 		return nil
 	})
 
-	suite.Step(`^Git Town (?:now|still) has the original branch hierarchy$`, func() error {
+	suite.Step(`^Git Town is (?:now|still) aware of the initial branch hierarchy$`, func() error {
 		have := state.gitEnv.DevRepo.BranchHierarchyTable()
 		state.initialBranchHierarchy.Sort()
 		diff, errCnt := have.EqualDataTable(state.initialBranchHierarchy)
@@ -136,7 +160,7 @@ func Steps(suite *godog.Suite, state *ScenarioState) {
 		return nil
 	})
 
-	suite.Step(`^I am collaborating with a coworker$`, func() error {
+	suite.Step(`^a coworker clones the repository$`, func() error {
 		return state.gitEnv.AddCoworkerRepo()
 	})
 
@@ -176,7 +200,7 @@ func Steps(suite *godog.Suite, state *ScenarioState) {
 		return nil
 	})
 
-	suite.Step(`^I haven't configured Git Town yet$`, func() error {
+	suite.Step(`^Git Town is not configured$`, func() error {
 		err := state.gitEnv.DevRepo.Config.DeletePerennialBranchConfiguration()
 		if err != nil {
 			return err
@@ -282,14 +306,6 @@ func Steps(suite *godog.Suite, state *ScenarioState) {
 		return nil
 	})
 
-	suite.Step(`^it prints the initial configuration prompt$`, func() error {
-		expected := "Git Town needs to be configured"
-		if !state.runRes.OutputContainsText(expected) {
-			return fmt.Errorf("text not found:\n\nEXPECTED: %q\n\nACTUAL:\n\n%q\n----------------------------", expected, state.runRes.Output())
-		}
-		return nil
-	})
-
 	suite.Step(`^it runs no commands$`, func() error {
 		commands := GitCommandsInGitTownOutput(state.runRes.Output())
 		if len(commands) > 0 {
@@ -332,24 +348,6 @@ func Steps(suite *godog.Suite, state *ScenarioState) {
 		return nil
 	})
 
-	suite.Step(`^my code base has a feature branch "([^"]*)"$`, func(name string) error {
-		err := state.gitEnv.DevRepo.CreateFeatureBranch(name)
-		if err != nil {
-			return err
-		}
-		state.initialBranchHierarchy.AddRow(name, "main")
-		return state.gitEnv.DevRepo.PushBranchSetUpstream(name)
-	})
-
-	suite.Step(`^my code base has a feature branch "([^"]*)" as a child of "([^"]*)"$`, func(branch, parent string) error {
-		err := state.gitEnv.DevRepo.CreateChildFeatureBranch(branch, parent)
-		if err != nil {
-			return err
-		}
-		state.initialBranchHierarchy.AddRow(branch, parent)
-		return state.gitEnv.DevRepo.PushBranchSetUpstream(branch)
-	})
-
 	suite.Step(`^my computer has a broken "([^"]*)" tool installed$`, func(name string) error {
 		return state.gitEnv.DevShell.MockBrokenCommand(name)
 	})
@@ -367,33 +365,12 @@ func Steps(suite *godog.Suite, state *ScenarioState) {
 		return state.gitEnv.DevShell.MockCommand(tool)
 	})
 
-	suite.Step(`^my (?:coworker|origin) has a feature branch "([^"]*)"$`, func(branch string) error {
-		return state.gitEnv.OriginRepo.CreateBranch(branch, "main")
-	})
-
-	suite.Step(`^my coworker fetches updates$`, func() error {
-		return state.gitEnv.CoworkerRepo.Fetch()
-	})
-
-	suite.Step(`^my coworker is on the "([^"]*)" branch$`, func(branchName string) error {
-		return state.gitEnv.CoworkerRepo.CheckoutBranch(branchName)
-	})
-
-	suite.Step(`^my coworker runs "([^"]+)"$`, func(command string) error {
-		state.runRes, state.runErr = state.gitEnv.CoworkerRepo.RunString(command)
-		return nil
-	})
-
-	suite.Step(`^my coworker sets the parent branch of "([^"]*)" as "([^"]*)"$`, func(childBranch, parentBranch string) error {
-		_ = state.gitEnv.CoworkerRepo.Config.SetParentBranch(childBranch, parentBranch)
-		return nil
-	})
-
-	suite.Step(`^my repo does not have a remote origin$`, func() error {
+	suite.Step(`^my repo does not have an origin$`, func() error {
 		err := state.gitEnv.DevRepo.RemoveRemote("origin")
 		if err != nil {
 			return err
 		}
+		state.initialRemoteBranches = []string{}
 		state.gitEnv.OriginRepo = nil
 		return nil
 	})
@@ -414,20 +391,19 @@ func Steps(suite *godog.Suite, state *ScenarioState) {
 	})
 
 	suite.Step(`^my repo has a branch "([^"]*)"$`, func(branch string) error {
+		state.initialLocalBranches = append(state.initialLocalBranches, branch)
 		return state.gitEnv.DevRepo.CreateBranch(branch, "main")
 	})
 
-	suite.Step(`^my repo has a feature branch "([^"]*)" with no parent$`, func(branch string) error {
-		return state.gitEnv.DevRepo.CreateFeatureBranchNoParent(branch)
-	})
-
-	suite.Step(`^my repo has a feature branch "([^"]+)" as a child of "([^"]+)"$`, func(childBranch, parentBranch string) error {
-		err := state.gitEnv.DevRepo.CreateChildFeatureBranch(childBranch, parentBranch)
+	suite.Step(`^my repo has a feature branch "([^"]+)" as a child of "([^"]+)"$`, func(branch, parentBranch string) error {
+		err := state.gitEnv.DevRepo.CreateChildFeatureBranch(branch, parentBranch)
 		if err != nil {
-			return fmt.Errorf("cannot create feature branch %q: %w", childBranch, err)
+			return fmt.Errorf("cannot create feature branch %q: %w", branch, err)
 		}
-		state.initialBranchHierarchy.AddRow(childBranch, parentBranch)
-		return state.gitEnv.DevRepo.PushBranchSetUpstream(childBranch)
+		state.initialLocalBranches = append(state.initialLocalBranches, branch)
+		state.initialRemoteBranches = append(state.initialRemoteBranches, branch)
+		state.initialBranchHierarchy.AddRow(branch, parentBranch)
+		return state.gitEnv.DevRepo.PushBranchToOrigin(branch)
 	})
 
 	suite.Step(`^my repo has a (local )?feature branch "([^"]*)"$`, func(localStr, branch string) error {
@@ -436,9 +412,11 @@ func Steps(suite *godog.Suite, state *ScenarioState) {
 		if err != nil {
 			return err
 		}
+		state.initialLocalBranches = append(state.initialLocalBranches, branch)
 		state.initialBranchHierarchy.AddRow(branch, "main")
 		if !isLocal {
-			return state.gitEnv.DevRepo.PushBranchSetUpstream(branch)
+			state.initialRemoteBranches = append(state.initialRemoteBranches, branch)
+			return state.gitEnv.DevRepo.PushBranchToOrigin(branch)
 		}
 		return nil
 	})
@@ -455,19 +433,19 @@ func Steps(suite *godog.Suite, state *ScenarioState) {
 		return state.gitEnv.AddUpstream()
 	})
 
-	suite.Step(`^my repo has "color\.ui" set to "([^"]*)"$`, func(value string) error {
+	suite.Step(`^Git Town's local "color.ui" setting is "([^"]*)"$`, func(value string) error {
 		return state.gitEnv.DevRepo.Config.SetColorUI(value)
 	})
 
-	suite.Step(`^my repo has "git-town.code-hosting-driver" set to "([^"]*)"$`, func(value string) error {
+	suite.Step(`^Git Town's local "code-hosting-driver" setting is "([^"]*)"$`, func(value string) error {
 		return state.gitEnv.DevRepo.Config.SetCodeHostingDriver(value)
 	})
 
-	suite.Step(`^my repo has "git-town.code-hosting-origin-hostname" set to "([^"]*)"$`, func(value string) error {
+	suite.Step(`^Git Town's local "code-hosting-origin-hostname" setting is "([^"]*)"$`, func(value string) error {
 		return state.gitEnv.DevRepo.Config.SetCodeHostingOriginHostname(value)
 	})
 
-	suite.Step(`^my repo has "git-town.ship-delete-remote-branch" set to "(true|false)"$`, func(value string) error {
+	suite.Step(`^Git Town's local "ship-delete-remote-branch" setting is "(true|false)"$`, func(value string) error {
 		parsed, err := strconv.ParseBool(value)
 		if err != nil {
 			return err
@@ -476,7 +454,7 @@ func Steps(suite *godog.Suite, state *ScenarioState) {
 		return nil
 	})
 
-	suite.Step(`^my repo has "git-town.sync-upstream" set to (true|false)$`, func(text string) error {
+	suite.Step(`^Git Town's local "sync-upstream" setting is (true|false)$`, func(text string) error {
 		value, err := strconv.ParseBool(text)
 		if err != nil {
 			return err
@@ -486,14 +464,17 @@ func Steps(suite *godog.Suite, state *ScenarioState) {
 	})
 
 	suite.Step(`^my repo has the branches "([^"]+)" and "([^"]+)"$`, func(branch1, branch2 string) error {
-		err := state.gitEnv.DevRepo.CreateBranch(branch1, "main")
-		if err != nil {
-			return err
+		for _, branch := range []string{branch1, branch2} {
+			err := state.gitEnv.DevRepo.CreateBranch(branch, "main")
+			if err != nil {
+				return err
+			}
+			state.initialLocalBranches = append(state.initialLocalBranches, branch)
 		}
-		return state.gitEnv.DevRepo.CreateBranch(branch2, "main")
+		return nil
 	})
 
-	suite.Step(`^my repo has the following tags$`, func(table *messages.PickleStepArgument_PickleTable) error {
+	suite.Step(`^my repo has the tags$`, func(table *messages.PickleStepArgument_PickleTable) error {
 		return state.gitEnv.CreateTags(table)
 	})
 
@@ -504,12 +485,14 @@ func Steps(suite *godog.Suite, state *ScenarioState) {
 			if err != nil {
 				return err
 			}
+			state.initialLocalBranches = append(state.initialLocalBranches, branch)
 			state.initialBranchHierarchy.AddRow(branch, "main")
 			if !isLocal {
-				err = state.gitEnv.DevRepo.PushBranchSetUpstream(branch)
+				err = state.gitEnv.DevRepo.PushBranchToOrigin(branch)
 				if err != nil {
 					return err
 				}
+				state.initialRemoteBranches = append(state.initialRemoteBranches, branch)
 			}
 		}
 		return nil
@@ -522,12 +505,14 @@ func Steps(suite *godog.Suite, state *ScenarioState) {
 			if err != nil {
 				return err
 			}
+			state.initialLocalBranches = append(state.initialLocalBranches, branch)
 			state.initialBranchHierarchy.AddRow(branch, "main")
 			if !isLocal {
-				err = state.gitEnv.DevRepo.PushBranchSetUpstream(branch)
+				err = state.gitEnv.DevRepo.PushBranchToOrigin(branch)
 				if err != nil {
 					return err
 				}
+				state.initialRemoteBranches = append(state.initialRemoteBranches, branch)
 			}
 		}
 		return nil
@@ -539,12 +524,14 @@ func Steps(suite *godog.Suite, state *ScenarioState) {
 		if err != nil {
 			return fmt.Errorf("cannot create perennial branches: %w", err)
 		}
+		state.initialLocalBranches = append(state.initialLocalBranches, branch1, branch2)
 		if !isLocal {
-			err = state.gitEnv.DevRepo.PushBranchSetUpstream(branch1)
+			state.initialRemoteBranches = append(state.initialRemoteBranches, branch1, branch2)
+			err = state.gitEnv.DevRepo.PushBranchToOrigin(branch1)
 			if err != nil {
 				return err
 			}
-			return state.gitEnv.DevRepo.PushBranchSetUpstream(branch2)
+			return state.gitEnv.DevRepo.PushBranchToOrigin(branch2)
 		}
 		return nil
 	})
@@ -556,29 +543,33 @@ func Steps(suite *godog.Suite, state *ScenarioState) {
 			if err != nil {
 				return fmt.Errorf("cannot create perennial branches: %w", err)
 			}
+			state.initialLocalBranches = append(state.initialLocalBranches, branch)
 			if !isLocal {
-				err = state.gitEnv.DevRepo.PushBranchSetUpstream(branch)
+				err = state.gitEnv.DevRepo.PushBranchToOrigin(branch)
 				if err != nil {
 					return fmt.Errorf("cannot push perennial branch upstream: %w", err)
 				}
+				state.initialRemoteBranches = append(state.initialRemoteBranches, branch)
 			}
 		}
 		return nil
 	})
 
-	suite.Step(`^my repo has the perennial branch "([^"]+)"`, func(branch1 string) error {
-		err := state.gitEnv.DevRepo.CreatePerennialBranches(branch1)
+	suite.Step(`^my repo has a perennial branch "([^"]+)"`, func(branch string) error {
+		err := state.gitEnv.DevRepo.CreatePerennialBranches(branch)
 		if err != nil {
 			return fmt.Errorf("cannot create perennial branches: %w", err)
 		}
-		return state.gitEnv.DevRepo.PushBranchSetUpstream(branch1)
+		state.initialLocalBranches = append(state.initialLocalBranches, branch)
+		state.initialRemoteBranches = append(state.initialRemoteBranches, branch)
+		return state.gitEnv.DevRepo.PushBranchToOrigin(branch)
 	})
 
-	suite.Step(`^my repo is left with my original commits$`, func() error {
+	suite.Step(`^now the initial commits exist$`, func() error {
 		return compareExistingCommits(state, state.initialCommits)
 	})
 
-	suite.Step(`^my repo is now has no perennial branches$`, func() error {
+	suite.Step(`^my repo now has no perennial branches$`, func() error {
 		state.gitEnv.DevRepo.Config.Reload()
 		branches := state.gitEnv.DevRepo.Config.PerennialBranches()
 		if len(branches) > 0 {
@@ -587,15 +578,41 @@ func Steps(suite *godog.Suite, state *ScenarioState) {
 		return nil
 	})
 
+	suite.Step(`^my repo (?:now|still) has its initial branches and branch hierarchy$`, func() error {
+		// verify initial branches
+		have, err := state.gitEnv.Branches()
+		if err != nil {
+			return err
+		}
+		want := state.InitialBranches()
+		diff, errorCount := have.EqualDataTable(want)
+		if errorCount != 0 {
+			fmt.Printf("\nERROR! Found %d differences in the existing branches\n\n", errorCount)
+			fmt.Println(diff)
+			return fmt.Errorf("mismatching branches found, see diff above")
+		}
+
+		// verify initial branch hierarchy
+		state.initialBranchHierarchy.Sort()
+		have = state.gitEnv.DevRepo.BranchHierarchyTable()
+		diff, errCnt := have.EqualDataTable(state.initialBranchHierarchy)
+		if errCnt > 0 {
+			fmt.Printf("\nERROR! Found %d differences in the branch hierarchy\n\n", errCnt)
+			fmt.Println(diff)
+			return fmt.Errorf("mismatching branch hierarchy found, see the diff above")
+		}
+		return nil
+	})
+
 	suite.Step(`^my repo knows about the remote branch$`, func() error {
 		return state.gitEnv.DevRepo.Fetch()
 	})
 
-	suite.Step(`^my repo now has the following commits$`, func(table *messages.PickleStepArgument_PickleTable) error {
+	suite.Step(`^now these commits exist$`, func(table *messages.PickleStepArgument_PickleTable) error {
 		return compareExistingCommits(state, table)
 	})
 
-	suite.Step(`^my repo now has the following tags$`, func(table *messages.PickleStepArgument_PickleTable) error {
+	suite.Step(`^my repo now has the tags$`, func(table *messages.PickleStepArgument_PickleTable) error {
 		tagTable, err := state.gitEnv.TagTable()
 		if err != nil {
 			return err
@@ -631,7 +648,7 @@ func Steps(suite *godog.Suite, state *ScenarioState) {
 		return nil
 	})
 
-	suite.Step(`^my repo (?:now|still) has the following committed files$`, func(table *messages.PickleStepArgument_PickleTable) error {
+	suite.Step(`^my repo (?:now|still) has these committed files$`, func(table *messages.PickleStepArgument_PickleTable) error {
 		fileTable, err := state.gitEnv.DevRepo.FilesInBranches()
 		if err != nil {
 			return fmt.Errorf("cannot determine files in branches in the developer repo: %w", err)
@@ -641,6 +658,23 @@ func Steps(suite *godog.Suite, state *ScenarioState) {
 			fmt.Printf("\nERROR! Found %d differences in the existing files\n\n", errorCount)
 			fmt.Println(diff)
 			return fmt.Errorf("mismatching files found, see diff above")
+		}
+		return nil
+	})
+
+	suite.Step(`^my repo (?:now|still) has the initial branches$`, func() error {
+		have, err := state.gitEnv.Branches()
+		if err != nil {
+			return err
+		}
+		want := state.InitialBranches()
+		// fmt.Printf("HAVE:\n%s\n", have.String())
+		// fmt.Printf("WANT:\n%s\n", want.String())
+		diff, errorCount := have.EqualDataTable(want)
+		if errorCount != 0 {
+			fmt.Printf("\nERROR! Found %d differences in the existing branches\n\n", errorCount)
+			fmt.Println(diff)
+			return fmt.Errorf("mismatching branches found, see diff above")
 		}
 		return nil
 	})
@@ -762,7 +796,8 @@ func Steps(suite *godog.Suite, state *ScenarioState) {
 		return nil
 	})
 
-	suite.Step(`^the "([^"]*)" branch gets deleted on the remote$`, func(name string) error {
+	suite.Step(`^origin deletes the "([^"]*)" branch$`, func(name string) error {
+		state.initialRemoteBranches = stringslice.Remove(state.initialRemoteBranches, name)
 		return state.gitEnv.OriginRepo.RemoveBranch(name)
 	})
 
@@ -777,7 +812,7 @@ func Steps(suite *godog.Suite, state *ScenarioState) {
 		return nil
 	})
 
-	suite.Step(`^my repo contains the commits$`, func(table *messages.PickleStepArgument_PickleTable) error {
+	suite.Step(`^the commits$`, func(table *messages.PickleStepArgument_PickleTable) error {
 		state.initialCommits = table
 		commits, err := FromGherkinTable(table)
 		if err != nil {
@@ -791,7 +826,6 @@ func Steps(suite *godog.Suite, state *ScenarioState) {
 		if err != nil {
 			return err
 		}
-		// remove the master branch from the remote since it exists only as a performance optimization
 		diff, errCount := existing.EqualGherkin(table)
 		if errCount > 0 {
 			fmt.Printf("\nERROR! Found %d differences in the branches\n\n", errCount)
@@ -853,7 +887,7 @@ func Steps(suite *godog.Suite, state *ScenarioState) {
 		return nil
 	})
 
-	suite.Step(`^the offline configuration is accidentally set to "([^"]*)"$`, func(value string) error {
+	suite.Step(`^Git Town's local "offline" setting is "([^"]*)"$`, func(value string) error {
 		_, err := state.gitEnv.DevRepo.Config.SetGlobalConfigValue("git-town.offline", value)
 		return err
 	})
@@ -922,7 +956,7 @@ func Steps(suite *godog.Suite, state *ScenarioState) {
 		return nil
 	})
 
-	suite.Step(`^the remote deletes the "([^"]*)" branch$`, func(name string) error {
+	suite.Step(`^origin deletes the "([^"]*)" branch$`, func(name string) error {
 		return state.gitEnv.OriginRepo.RemoveBranch(name)
 	})
 

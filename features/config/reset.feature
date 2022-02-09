@@ -1,12 +1,12 @@
 Feature: reset the configuration
 
-  Scenario: everything is configured
+  Scenario: with configuration
     Given the main branch is "main"
     And the perennial branches are "qa" and "staging"
     When I run "git-town config reset"
-    Then Git Town is no longer configured for this repo
+    Then Git Town is no longer configured
 
-  Scenario: nothing is configured yet
-    Given I haven't configured Git Town yet
+  Scenario: no configuration
+    Given Git Town is not configured
     When I run "git-town config reset"
-    Then Git Town is no longer configured for this repo
+    Then Git Town is no longer configured

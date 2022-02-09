@@ -1,7 +1,7 @@
 Feature: does not ship perennial branches
 
   Background:
-    Given my repo has the perennial branch "production"
+    Given my repo has a perennial branch "production"
     And I am on the "main" branch
     And my workspace has an uncommitted file
     When I run "git-town ship production"
@@ -16,7 +16,7 @@ Feature: does not ship perennial branches
       """
     And I am still on the "main" branch
     And my workspace still contains my uncommitted file
-    And Git Town now has no branch hierarchy information
+    And Git Town is now aware of no branch hierarchy
 
   Scenario: undo
     When I run "git-town undo"
@@ -26,4 +26,4 @@ Feature: does not ship perennial branches
       nothing to undo
       """
     And I am still on the "main" branch
-    And Git Town now has no branch hierarchy information
+    And Git Town is now aware of no branch hierarchy

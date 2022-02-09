@@ -1,47 +1,36 @@
-Feature: killing a local branch
+Feature: delete a local branch
 
   Background:
-    Given my repo has a feature branch "other-feature"
-    And my repo has a local feature branch "current-feature"
-    And my repo contains the commits
-      | BRANCH          | LOCATION      | MESSAGE                |
-      | current-feature | local         | current feature commit |
-      | other-feature   | local, remote | other feature commit   |
-    And I am on the "current-feature" branch
+    And my repo has a local feature branch "local"
+    And the commits
+      | BRANCH | LOCATION | MESSAGE      |
+      | local  | local    | local commit |
+    And I am on the "local" branch
     And my workspace has an uncommitted file
     When I run "git-town kill"
 
   Scenario: result
     Then it runs the commands
-      | BRANCH          | COMMAND                                |
-      | current-feature | git fetch --prune --tags               |
-      |                 | git add -A                             |
-      |                 | git commit -m "WIP on current-feature" |
-      |                 | git checkout main                      |
-      | main            | git branch -D current-feature          |
+      | BRANCH | COMMAND                      |
+      | local  | git fetch --prune --tags     |
+      |        | git add -A                   |
+      |        | git commit -m "WIP on local" |
+      |        | git checkout main            |
+      | main   | git branch -D local          |
     And I am now on the "main" branch
     And the existing branches are
-      | REPOSITORY    | BRANCHES            |
-      | local, remote | main, other-feature |
-    And my repo now has the following commits
-      | BRANCH        | LOCATION      | MESSAGE              |
-      | other-feature | local, remote | other feature commit |
-    And Git Town is now aware of this branch hierarchy
-      | BRANCH        | PARENT |
-      | other-feature | main   |
+      | REPOSITORY    | BRANCHES |
+      | local, origin | main     |
+    And Git Town is now aware of no branch hierarchy
 
   Scenario: undo
     When I run "git-town undo"
     Then it runs the commands
-      | BRANCH          | COMMAND                                                       |
-      | main            | git branch current-feature {{ sha 'WIP on current-feature' }} |
-      |                 | git checkout current-feature                                  |
-      | current-feature | git reset {{ sha 'current feature commit' }}                  |
-    And I am now on the "current-feature" branch
+      | BRANCH | COMMAND                                   |
+      | main   | git branch local {{ sha 'WIP on local' }} |
+      |        | git checkout local                        |
+      | local  | git reset {{ sha 'local commit' }}        |
+    And I am now on the "local" branch
     And my workspace still contains my uncommitted file
-    And the existing branches are
-      | REPOSITORY | BRANCHES                             |
-      | local      | main, current-feature, other-feature |
-      | remote     | main, other-feature                  |
-    And my repo is left with my original commits
-    And Git Town now has the original branch hierarchy
+    And now the initial commits exist
+    And my repo now has its initial branches and branch hierarchy

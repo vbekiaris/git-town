@@ -2,8 +2,8 @@ Feature: ship a feature branch in a local repo
 
   Background:
     Given my repo has a feature branch "feature"
-    And my repo does not have a remote origin
-    And my repo contains the commits
+    And my repo does not have an origin
+    And the commits
       | BRANCH  | LOCATION | MESSAGE        |
       | feature | local    | feature commit |
     And I am on the "feature" branch
@@ -21,10 +21,10 @@ Feature: ship a feature branch in a local repo
     And the existing branches are
       | REPOSITORY | BRANCHES |
       | local      | main     |
-    And my repo now has the following commits
+    And now these commits exist
       | BRANCH | LOCATION | MESSAGE      |
       | main   | local    | feature done |
-    And Git Town now has no branch hierarchy information
+    And Git Town is now aware of no branch hierarchy
 
   Scenario: undo
     When I run "git-town undo"
@@ -34,9 +34,9 @@ Feature: ship a feature branch in a local repo
       |        | git revert {{ sha 'feature done' }}           |
       |        | git checkout feature                          |
     And I am now on the "feature" branch
-    And my repo now has the following commits
+    And now these commits exist
       | BRANCH  | LOCATION | MESSAGE               |
       | main    | local    | feature done          |
       |         |          | Revert "feature done" |
       | feature | local    | feature commit        |
-    And Git Town now has the original branch hierarchy
+    And my repo now has its initial branches and branch hierarchy
