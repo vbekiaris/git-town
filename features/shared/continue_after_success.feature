@@ -1,7 +1,7 @@
 Feature: continue after successful command
 
   Scenario Outline:
-    Given my repo has a feature branch "feature"
+    Given a feature branch "feature"
     And I run "git-town <COMMAND>"
     When I run "git-town continue"
     Then it prints the error:
@@ -13,11 +13,11 @@ Feature: continue after successful command
       | COMMAND              |
       |                      |
       | alias true           |
-      | append new-feature   |
+      | append new           |
       | completions fish     |
       | config               |
       | diff-parent          |
-      | hack new-feature     |
+      | hack new             |
       | help                 |
       | kill feature         |
       | main_branch          |
@@ -25,7 +25,7 @@ Feature: continue after successful command
       | new-pull-request     |
       | offline              |
       | perennial-branches   |
-      | prepend new-feature  |
+      | prepend new          |
       | prune-branches       |
       | pull-branch-strategy |
       | rename-branch        |

@@ -1,17 +1,17 @@
 Feature: git-new-pull-request: on a feature branch with a upstream remote
 
   Background:
-    Given my repo has an upstream repo
+    Given an upstream repo
     And my repo's upstream is "git@github.com:git-town/git-town"
-    And my repo's origin is "git@github.com:kevgo/git-town"
-    And my repo has a feature branch named "feature"
-    And the following commits exist in my repo
+    And the origin is "git@github.com:kevgo/git-town"
+    And a feature branch "feature"
+    And the commits
       | BRANCH  | LOCATION | MESSAGE         |
       | main    | upstream | upstream commit |
       | feature | local    | local commit    |
-    And I am on the "feature" branch
-    And my workspace has an uncommitted file
-    And my computer has the "open" tool installed
+    And the current branch is "feature"
+    And an uncommitted file
+    And tool "open" is installed
     When I run "git-town new-pull-request"
 
 
@@ -32,12 +32,12 @@ Feature: git-new-pull-request: on a feature branch with a upstream remote
       |         | git push                                                        |
       |         | git stash pop                                                   |
       | <none>  | open https://github.com/kevgo/git-town/compare/feature?expand=1 |
-    And I am still on the "feature" branch
-    And my workspace still contains my uncommitted file
-    And my repo now has the following commits
+    And the current branch is still "feature"
+    And the uncommitted file still exists
+    And now these commits exist
       | BRANCH  | LOCATION                | MESSAGE                          |
-      | main    | local, remote, upstream | upstream commit                  |
-      | feature | local, remote           | local commit                     |
+      | main    | local, origin, upstream | upstream commit                  |
+      | feature | local, origin           | local commit                     |
       |         |                         | upstream commit                  |
       |         |                         | Merge branch 'main' into feature |
     And "open" launches a new pull request with this url in my browser:
