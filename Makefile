@@ -1,17 +1,18 @@
 VERSION ?= 0.0.0
 TODAY=$(shell date +'%Y/%m/%d')
 
-.DEFAULT_GOAL := help
-
 build:  # builds for the current platform
 	go install -ldflags "-X github.com/git-town/git-town/v7/src/cmd.version=v${VERSION}-dev -X github.com/git-town/git-town/v7/src/cmd.buildDate=${TODAY}"
 
-cuke: build   # runs the new Godog-based feature tests
+cuke: build   # runs all end-to-end tests
 	@env LANG=C GOGC=off go test . -v -count=1
 
-cuke-open:  # runs only the currently uncommitted feature tests
+cuke-open:  # runs only the currently uncommitted end-to-end tests
 	@git status --porcelain | grep -v '^\s*D ' | sed 's/^\s*\w\s*//' | grep '\.feature' | xargs godog
 #                           remove deleted     remove indicator
+
+cukethis: build   # runs the end-to-end tests that have a @this tag
+	@env LANG=C GOGC=off go test . -v -count=1 -this
 
 cuke-prof: build  # creates a flamegraph
 	env LANG=C GOGC=off go test . -v -cpuprofile=godog.out
@@ -78,7 +79,7 @@ setup-tools:  # the setup steps necessary for document tests
 	cd tools && yarn install
 
 setup-go: setup-godog
-	go install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.43.0
+	go install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.50.0
 	go install mvdan.cc/gofumpt@v0.3.0
 	go install github.com/KyleBanks/depth/cmd/depth@latest
 	go install github.com/boyter/scc@latest
@@ -96,10 +97,10 @@ test-go: build u lint-go cuke  # runs all tests for Golang
 
 test-md: lint-md   # runs all Markdown tests
 
-u:  # runs only the unit tests for changed code
+unit:  # runs only the unit tests for changed code
 	env GOGC=off go test -timeout 30s ./src/... ./test/...
 
-unit:  # runs all the unit tests with race detector
+unit-all:  # runs all the unit tests with race detector
 	env GOGC=off go test -count=1 -timeout 60s -race ./src/... ./test/...
 
 update:  # updates all dependencies
@@ -108,3 +109,6 @@ update:  # updates all dependencies
 	go mod vendor
 	echo
 	echo Please update the tools that "make setup" installs manually.
+
+
+.DEFAULT_GOAL := help

@@ -52,7 +52,7 @@ Run all unit tests:
 <a type="make/command">
 
 ```
-make unit
+make unit-all
 ```
 
 </a>
@@ -62,7 +62,7 @@ Run unit tests for packages containing changes:
 <a type="make/command">
 
 ```
-make u
+make unit
 ```
 
 </a>
@@ -86,10 +86,18 @@ make cuke
 
 </a>
 
-Run individual Cucumber tests:
+To run individual Cucumber tests, add a `@this` flag to the test you want to
+run. Example:
 
-```bash
-godog [path to file/folder]     # runs the given end-to-end tests
+```cucumber
+@this
+Scenario: foo bar
+```
+
+Then run:
+
+```
+make cukethis
 ```
 
 Certain tests require that the Git remote points to an actual GitHub, Gitea,

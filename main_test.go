@@ -1,6 +1,7 @@
 package main_test
 
 import (
+	"flag"
 	"runtime"
 	"testing"
 
@@ -18,9 +19,12 @@ func FeatureContext(suite *godog.Suite) {
 	test.Steps(suite, state)
 }
 
-// nolint:paralleltest
+//nolint:paralleltest
 func TestGodog(t *testing.T) {
 	tags := ""
+	if *useThis {
+		tags = "@this"
+	}
 	if runtime.GOOS == "windows" {
 		tags = "~@skipWindows"
 	}
@@ -37,3 +41,5 @@ func TestGodog(t *testing.T) {
 		t.FailNow()
 	}
 }
+
+var useThis = flag.Bool("this", false, "if set, runs only tests with the @this flag")
