@@ -22,20 +22,19 @@ dependencies: tools/depth  # prints the dependencies between packages as a tree
 docs: build tools/node_modules  # tests the documentation
 	${CURDIR}/tools/node_modules/.bin/text-run --offline
 
-fix: tools/gofumpt  # auto-fixes lint issues in all languages
+fix: tools/golangci-lint tools/gofumpt tools/node_modules tools/shellcheck tools/shfmt  # auto-fixes lint issues in all languages
+	git diff --check
 	tools/gofumpt -l -w .
-	dprint fmt
+	${CURDIR}/tools/node_modules/.bin/dprint fmt
 	${CURDIR}/tools/node_modules/.bin/prettier --write '**/*.yml'
+	tools/shfmt -f . | grep -v tools/node_modules | grep -v '^vendor\/' | xargs tools/shfmt --write
+	tools/shfmt -f . | grep -v tools/node_modules | grep -v '^vendor\/' | xargs tools/shellcheck
+	tools/golangci-lint run
+
 
 help:  # prints all available targets
 	@cat Makefile | grep '^[^ ]*:' | grep -v '.PHONY' | grep -v help | grep -v "^tools\/" | sed 's/:.*#/#/' | column -s "#" -t
 
-lint: tools/golangci-lint tools/node_modules tools/shellcheck  # lints all the source code
-	git diff --check
-	tools/golangci-lint run
-	${CURDIR}/tools/node_modules/.bin/dprint check
-	find . -type f | grep -v tools/node_modules | grep -v '^\.\/\vendor\/' | grep -v '\.sample$$' | xargs grep -l '^\#!\/' | xargs tools/shellcheck
-	${CURDIR}/tools/node_modules/.bin/prettier --check '**/*.yml'
 
 msi:  # compiles the MSI installer for Windows
 	rm -f git-town*.msi
@@ -68,7 +67,7 @@ release-win: msi  # adds the Windows installer to the release
 stats: tools/scc  # shows code statistics
 	@find . -type f | grep -v './tools/node_modules' | grep -v '\./vendor/' | grep -v '\./.git/' | grep -v './website/book' | xargs scc
 
-test: lint docs u cuke  # runs all the tests
+test: fix docs unit cuke  # runs all the tests
 .PHONY: test
 
 test-go: build u lint-go cuke  # runs all tests for Golang
@@ -115,3 +114,8 @@ tools/shellcheck: Makefile
 	@mv shellcheck-stable/shellcheck tools
 	@rm -rf shellcheck-stable
 	@touch tools/shellcheck   # update the timestamp so that Make doesn't re-install Shellcheck each time it runs
+
+tools/shfmt: Makefile
+	echo installing Shellfmt ...
+	curl -sSL https://github.com/mvdan/sh/releases/download/v3.5.1/shfmt_v3.5.1_linux_amd64 -o tools/shfmt
+	chmod +x tools/shfmt
