@@ -3,6 +3,7 @@ linters:
   disable:
     - cyclop # we keep a tab on function length ourselves
     - deadcode # deprecated
+    - dupl # too many false positives
     - exhaustruct # not applicable at the moment
     - exhaustivestruct # not applicable at the moment
     - forbidigo # Git Town prints a lot to the CLI
@@ -13,6 +14,7 @@ linters:
     - gocognit # we keep track of this via code reviews
     - goconst # tests contain a ton of hard-coded test strings, for example branch names
     - gocyclo # we keep track of this via code reviews
+    - godox # we allow TODO comments
     - golint # deprecated
     - gomnd # tests contain hard-coded test data that wouldn't make sense to extract into constants
     - ifshort # this enforces less readable code
