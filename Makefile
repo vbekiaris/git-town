@@ -3,6 +3,7 @@ ALPHAVET_VERSION = 0.1.0
 DEPTH_VERSION = 1.2.1
 GOFUMPT_VERSION = 0.4.0
 GOLANGCILINT_VERSION = 1.54.2
+HUB_VERSION = 2.14.2
 SCC_VERSION = 3.1.0
 SHELLCHECK_VERSION = 0.9.0
 SHFMT_VERSION = 3.6.0
@@ -57,7 +58,7 @@ msi:  # compiles the MSI installer for Windows
 	go-msi make --msi dist/git-town_${RELEASE_VERSION}_windows_intel_64.msi --version ${RELEASE_VERSION} --src installer/templates/ --path installer/wix.json
 	@rm git-town.exe
 
-release-linux:  # creates a new release
+release-linux: tools/hub_${HUB_VERSION}  # creates a new release
 	# cross-compile the binaries
 	goreleaser --rm-dist
 	# create GitHub release with files in alphabetical order
@@ -136,6 +137,11 @@ tools/golangci_lint_${GOLANGCILINT_VERSION}:
 	@echo "Installing golangci-lint ${GOLANGCILINT_VERSION} ..."
 	@curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b tools v${GOLANGCILINT_VERSION}
 	@mv tools/golangci-lint tools/golangci_lint_${GOLANGCILINT_VERSION}
+
+tools/hub_${HUB_VERSION}:
+	@echo "Installing hub ${HUB_VERSION} ..."
+	@env GOBIN="$(CURDIR)/tools" go install github.com/mislav/hub@v${HUB_VERSION}
+	@mv tools/hub tools/hub_${HUB_VERSION}
 
 tools/node_modules: tools/yarn.lock
 	@echo "Installing Node based tools"
