@@ -140,7 +140,7 @@ tools/golangci_lint_${GOLANGCILINT_VERSION}:
 
 tools/hub_${HUB_VERSION}:
 	@echo "Installing hub ${HUB_VERSION} ..."
-	@env GOBIN="$(CURDIR)/tools" go install github.com/mislav/hub@v${HUB_VERSION}
+	env GOBIN="$(CURDIR)/tools" go install github.com/mislav/hub@v${HUB_VERSION}
 	@mv tools/hub tools/hub_${HUB_VERSION}
 
 tools/node_modules: tools/yarn.lock
